@@ -1,4 +1,4 @@
-package com.example.randomcoffee.model.db;
+package com.example.randomcoffee.model.db.entity;
 
 
 import com.example.randomcoffee.model.enums.Gender;
@@ -21,7 +21,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "users")
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class User {
+public class CoffeeUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
@@ -40,9 +40,8 @@ public class User {
     @Column(name = "last_name")
     String lastName;
 
-    @Column(name = "middle_name")
-    String middleName;
-    Integer age;
+    @Column(name = "work_period")
+    Integer periodOfWork;
 
     @Enumerated(EnumType.STRING)
     Gender gender;
@@ -60,8 +59,6 @@ public class User {
     @Enumerated(EnumType.STRING)
     UserActivityStatus status;
 
-//    @OneToMany
-//    @JsonManagedReference(value = "driver_cars")
-//    List<Car> cars;
+Integer meetingsCount;
 }
 

@@ -7,10 +7,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class MainPageController {
 
+
     @GetMapping("/")
     public String mainPage(Model model) {
-        String greeting = "This is main page";
-        model.addAttribute("mainPage", greeting);
+        model.addAttribute("mainPage", "This is main page!");
         return "main-page";
     }
 
@@ -22,7 +22,13 @@ public class MainPageController {
 
     @GetMapping("/registration")
     public String registration(Model model) {
-        model.addAttribute("regForm", "Форма регистрации");
+        model.addAttribute("regForm", "Зарегистрироваться");
         return "reg-form";
+    }
+
+    @GetMapping("/about")
+    public String about(Model model) {
+        model.addAttribute("about", "О проекте");
+        return "about";
     }
 }

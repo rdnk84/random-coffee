@@ -22,7 +22,7 @@ private final UserServiceImpl userService;
         return userService.createUser(request);
     }
 
-    @Operation(summary = "Get User by id")
+    @Operation(summary = "Get CoffeeUser by id")
     @GetMapping("/{id}")
     public UserResponse getUser(@PathVariable Long id) {
         return userService.getUserDto(id);

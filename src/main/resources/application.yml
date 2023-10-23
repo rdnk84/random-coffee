@@ -7,6 +7,11 @@ spring:
     password: 357
     driver-class-name: org.postgresql.Driver
 
+  security:
+    user:
+      name: admin
+      password: admin
+
   jpa:
     database: postgresql
     show-sql: true
@@ -24,6 +29,8 @@ logging:
     org:
       hibernate:
         type: trace
+
+
 
 #app:
 #  base-url: itmo.ru

@@ -1,15 +1,12 @@
 package com.example.randomcoffee.service;
 
-import com.example.randomcoffee.model.db.User;
+import com.example.randomcoffee.model.db.entity.CoffeeUser;
 import com.example.randomcoffee.model.db.repository.UserRepo;
 import com.example.randomcoffee.rest_api.dto.UserRequest;
 import com.example.randomcoffee.rest_api.dto.UserResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.validator.routines.EmailValidator;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -26,8 +23,8 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public UserResponse getUserDto(Long id) {
-        User user = userRepo.findById(id).orElse(new User());
-        UserResponse userFound = mapper.convertValue(user, UserResponse.class);
+        CoffeeUser coffeeUser = userRepo.findById(id).orElse(new CoffeeUser());
+        UserResponse userFound = mapper.convertValue(coffeeUser, UserResponse.class);
         return userFound;
     }
 
@@ -49,15 +46,15 @@ public class UserServiceImpl implements UserService{
 //        String email = request.getEmail().trim();
 //        userRepo.findByEmail(email)
 //                .ifPresent(u -> {
-//                    throw new CustomException("User with this email already exist", HttpStatus.BAD_REQUEST);
+//                    throw new CustomException("CoffeeUser with this email already exist", HttpStatus.BAD_REQUEST);
 //                });
 //        if (StringUtils.isBlank(request.getLastName()) || StringUtils.isBlank(request.getFirstName()) || StringUtils.isBlank(request.getPassword())) {
 //            throw new CustomException("Some of highlighted fields are blank", HttpStatus.BAD_REQUEST);
 //        }
-        User user = mapper.convertValue(request, User.class);
-        user.setCreatedAt(LocalDateTime.now());
+        CoffeeUser coffeeUser = mapper.convertValue(request, CoffeeUser.class);
+        coffeeUser.setCreatedAt(LocalDateTime.now());
 
-        User save = userRepo.save(user);
+        CoffeeUser save = userRepo.save(coffeeUser);
         UserResponse createdUser = mapper.convertValue(save, UserResponse.class);
 
         return createdUser;
