@@ -1,5 +1,6 @@
 package com.example.randomcoffee.model.db.entity;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -9,15 +10,14 @@ import lombok.experimental.FieldDefaults;
 @Getter
 @Setter
 @Entity
-@Table(name = "astro_sign")
+@Table(name = "events")
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class AstroSign {
-
+@Tag(name="детали встречи")
+public class MeetingEvent {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    String signTitle;
-    String desc;
+
 }

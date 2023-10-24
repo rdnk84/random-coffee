@@ -1,4 +1,4 @@
-package com.example.randomcoffee.rest_api;
+package com.example.randomcoffee.rest_api.rest_controllers;
 
 import com.example.randomcoffee.rest_api.dto.UserRequest;
 import com.example.randomcoffee.rest_api.dto.UserResponse;
@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Random-coffee")
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/users")
 @RequiredArgsConstructor
 public class UserRestController {
 
