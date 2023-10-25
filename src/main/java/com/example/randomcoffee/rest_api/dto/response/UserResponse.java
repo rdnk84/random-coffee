@@ -1,5 +1,6 @@
 package com.example.randomcoffee.rest_api.dto.response;
 
+import com.example.randomcoffee.model.enums.AstroSign;
 import com.example.randomcoffee.rest_api.dto.request.UserRequest;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -14,4 +15,6 @@ import lombok.experimental.SuperBuilder;
 public class UserResponse extends UserRequest {
 
     Long id;
+    OfficeResponse office;
+    DepartmentResponse department;
 }

@@ -3,6 +3,7 @@ package com.example.randomcoffee.model.db.entity;
 
 import com.example.randomcoffee.model.enums.AstroSign;
 import com.example.randomcoffee.model.enums.Gender;
+import com.example.randomcoffee.model.enums.Hobby;
 import com.example.randomcoffee.model.enums.UserActivityStatus;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -47,6 +48,9 @@ public class CoffeeUser {
     @Column(name = "last_name")
     String lastName;
 
+    @Column(name = "middle_name")
+    String MiddleName;
+
     @Column(name = "start_work_date")
     private Date startWork;
     @Enumerated(EnumType.STRING)
@@ -73,8 +77,7 @@ public class CoffeeUser {
     @Enumerated(EnumType.STRING)
     AstroSign astroSign;
 
-    @ManyToOne
-    @JsonBackReference(value = "hobby_users")
+    @Enumerated(EnumType.STRING)
     Hobby hobby;
 
     @ManyToOne
@@ -85,8 +88,12 @@ public class CoffeeUser {
     @JsonBackReference(value = "office_users")
     Office office;
 
-    @OneToMany
-    @JsonManagedReference(value = "user_projects")
+    @ManyToMany()
+    @JoinTable(
+             name = "user_project"
+            , joinColumns = @JoinColumn(name = "user_id")
+            , inverseJoinColumns = @JoinColumn(name = "project_id")
+    )
     List<Project> projects;
 }
 

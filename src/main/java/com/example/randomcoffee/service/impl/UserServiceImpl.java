@@ -57,7 +57,6 @@ public class UserServiceImpl implements UserService {
 
         CoffeeUser save = userRepo.save(coffeeUser);
         UserResponse createdUser = mapper.convertValue(save, UserResponse.class);
-
         return createdUser;
     }
 

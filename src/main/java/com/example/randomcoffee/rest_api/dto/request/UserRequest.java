@@ -2,6 +2,7 @@ package com.example.randomcoffee.rest_api.dto.request;
 
 import com.example.randomcoffee.model.enums.AstroSign;
 import com.example.randomcoffee.model.enums.Gender;
+import com.example.randomcoffee.model.enums.Hobby;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -24,6 +25,7 @@ public class UserRequest {
     String middleName;
     Gender gender;
     AstroSign astroSign;
+    Hobby hobby;
 
 //    String cityLocation;
 //    Date startWorkDate;

@@ -22,11 +22,19 @@ public class Department {
     Long id;
 
     @Column(name = "title")
-    String depTitle;
+    String title;
 
     String description;
 
     @OneToMany
     @JsonManagedReference(value = "department_users")
     List<CoffeeUser> users;
+
+    @ManyToMany()
+    @JoinTable(
+            name = "office_department"
+            , joinColumns = @JoinColumn(name = "department_id")
+            , inverseJoinColumns = @JoinColumn(name = "office_id")
+    )
+    List<Office> offices;
 }
