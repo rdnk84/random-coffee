@@ -1,9 +1,6 @@
 package com.example.randomcoffee.model.db.entity;
 
-import com.example.randomcoffee.model.enums.Countries;
 import com.example.randomcoffee.model.enums.OfficeStatus;
-import com.example.randomcoffee.model.enums.UserActivityStatus;
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -32,8 +29,6 @@ public class Office {
     @Column(name = "city")
     String city;
 
-    @Enumerated(EnumType.STRING)
-    Countries country;
 
     @Column(name = "created_at")
     @JsonSerialize(using = LocalDateTimeSerializer.class)
@@ -52,12 +47,5 @@ public class Office {
     @JsonManagedReference(value = "office_users")
     List<CoffeeUser> users;
 
-    @ManyToMany()
-    @JoinTable(
-            name = "office_department"
-            , joinColumns = @JoinColumn(name = "office_id")
-            , inverseJoinColumns = @JoinColumn(name = "department_id")
-    )
-    List<Department> offices;
 
 }

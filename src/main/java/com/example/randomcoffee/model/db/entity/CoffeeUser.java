@@ -2,11 +2,11 @@ package com.example.randomcoffee.model.db.entity;
 
 
 import com.example.randomcoffee.model.enums.AstroSign;
+import com.example.randomcoffee.model.enums.Department;
 import com.example.randomcoffee.model.enums.Gender;
-import com.example.randomcoffee.model.enums.Hobby;
 import com.example.randomcoffee.model.enums.UserActivityStatus;
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
@@ -19,6 +19,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
@@ -51,8 +52,8 @@ public class CoffeeUser {
     @Column(name = "middle_name")
     String MiddleName;
 
-    @Column(name = "start_work_date")
-    private Date startWork;
+    @JsonFormat(pattern="yyyy-MM-dd")
+    LocalDate hiringDate;
     @Enumerated(EnumType.STRING)
     Gender gender;
 
@@ -77,13 +78,16 @@ public class CoffeeUser {
     @Enumerated(EnumType.STRING)
     AstroSign astroSign;
 
-
-
-    List<Hobby> hobbies;
-
-    @ManyToOne
-    @JsonBackReference(value = "department_users")
+    @Enumerated(EnumType.STRING)
     Department department;
+
+    @ManyToMany()
+    @JoinTable(
+            name = "user_hobby"
+            , joinColumns = @JoinColumn(name = "user_id")
+            , inverseJoinColumns = @JoinColumn(name = "hobby_id")
+    )
+    List<Hobby> hobbies;
 
     @ManyToOne
     @JsonBackReference(value = "office_users")

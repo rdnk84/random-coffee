@@ -1,14 +1,15 @@
 package com.example.randomcoffee.rest_api.dto.request;
 
 import com.example.randomcoffee.model.enums.AstroSign;
+import com.example.randomcoffee.model.enums.Department;
 import com.example.randomcoffee.model.enums.Gender;
-import com.example.randomcoffee.model.enums.Hobby;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
 
-import java.util.Date;
+import java.time.LocalDate;
+
 
 @Getter
 @Setter
@@ -25,11 +26,7 @@ public class UserRequest {
     String middleName;
     Gender gender;
     AstroSign astroSign;
-    Hobby hobby;
+    LocalDate hiringDate;
+    Department department;
 
-//    String cityLocation;
-//    Date startWorkDate;
-//    String hobby;
-//    String project;
-//    String department;
 }

@@ -1,6 +1,6 @@
 package com.example.randomcoffee.rest_api.dto.response;
 
-import com.example.randomcoffee.rest_api.dto.request.OfficeRequest;
+import com.example.randomcoffee.rest_api.dto.request.HobbyRequest;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
@@ -11,8 +11,7 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class OfficeResponse extends OfficeRequest {
+public class HobbyResponse extends HobbyRequest {
 
     Long id;
-    CountryResponse country;
 }

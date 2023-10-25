@@ -1,9 +1,16 @@
 package com.example.randomcoffee.rest_api.dto.request;
 
+import com.example.randomcoffee.model.db.entity.CoffeeUser;
+import com.example.randomcoffee.model.db.entity.Office;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -12,8 +19,10 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class OfficeRequest {
+public class HobbyRequest {
 
-    String city;
+    String title;
+    String description;
+
 
 }

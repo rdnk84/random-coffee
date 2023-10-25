@@ -1,6 +1,6 @@
 package com.example.randomcoffee.model.db.entity;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -12,29 +12,23 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
-@Table(name = "departments")
+@Table(name = "hobbies")
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Department {
-
+@Tag(name = "хобби")
+public class Hobby {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @Column(name = "title")
     String title;
-
     String description;
-
-    @OneToMany
-    @JsonManagedReference(value = "department_users")
-    List<CoffeeUser> users;
 
     @ManyToMany()
     @JoinTable(
-            name = "office_department"
-            , joinColumns = @JoinColumn(name = "department_id")
-            , inverseJoinColumns = @JoinColumn(name = "office_id")
+            name = "hobby_user"
+            , joinColumns = @JoinColumn(name = "hobby_id")
+            , inverseJoinColumns = @JoinColumn(name = "user_id")
     )
-    List<Office> offices;
+    List<CoffeeUser> users;
 }
