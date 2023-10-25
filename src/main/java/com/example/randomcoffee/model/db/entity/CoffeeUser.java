@@ -77,8 +77,9 @@ public class CoffeeUser {
     @Enumerated(EnumType.STRING)
     AstroSign astroSign;
 
-    @Enumerated(EnumType.STRING)
-    Hobby hobby;
+
+
+    List<Hobby> hobbies;
 
     @ManyToOne
     @JsonBackReference(value = "department_users")

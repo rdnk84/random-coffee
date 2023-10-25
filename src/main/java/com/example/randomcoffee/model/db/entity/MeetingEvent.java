@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
+import java.util.Date;
+
 @Getter
 @Setter
 @Entity
@@ -19,5 +21,8 @@ public class MeetingEvent {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
+    Date meetingDate;
+
+    Boolean isCompleted;
 
 }
