@@ -1,9 +1,10 @@
-package com.example.randomcoffee.service;
+package com.example.randomcoffee.service.impl;
 
 import com.example.randomcoffee.model.db.entity.CoffeeUser;
 import com.example.randomcoffee.model.db.repository.UserRepo;
-import com.example.randomcoffee.rest_api.dto.UserRequest;
-import com.example.randomcoffee.rest_api.dto.UserResponse;
+import com.example.randomcoffee.rest_api.dto.request.UserRequest;
+import com.example.randomcoffee.rest_api.dto.response.UserResponse;
+import com.example.randomcoffee.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +16,7 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserService {
 
     private final UserRepo userRepo;
     private final ObjectMapper mapper;

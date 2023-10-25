@@ -1,7 +1,7 @@
 package com.example.randomcoffee.service;
 
-import com.example.randomcoffee.rest_api.dto.UserRequest;
-import com.example.randomcoffee.rest_api.dto.UserResponse;
+import com.example.randomcoffee.rest_api.dto.request.UserRequest;
+import com.example.randomcoffee.rest_api.dto.response.UserResponse;
 
 import java.util.List;
 

@@ -1,59 +1,37 @@
 package com.example.randomcoffee.model.db.entity;
 
-
-import com.example.randomcoffee.model.enums.AstroSign;
-import com.example.randomcoffee.model.enums.Gender;
+import com.example.randomcoffee.model.enums.OfficeStatus;
 import com.example.randomcoffee.model.enums.UserActivityStatus;
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotEmpty;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 
 @Getter
 @Setter
 @Entity
-@Table(name = "users")
+@Table(name = "offices")
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Tag(name = "сотрудник")
-public class CoffeeUser {
+public class Office {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @NotEmpty
-    String email;
+    @Column(name = "city")
+    String city;
 
-    @NotEmpty
-    String password;
-
-    @NotEmpty
-    @Column(name = "first_name")
-    String firstName;
-
-    @NotEmpty
-    @Column(name = "last_name")
-    String lastName;
-
-    @Column(name = "start_work_date")
-    private Date startWork;
-    @Enumerated(EnumType.STRING)
-    Gender gender;
-
-    @Column(name = "image_url")
-    private String image;
+    @Column(name = "country")
+    String country;
 
     @Column(name = "created_at")
     @JsonSerialize(using = LocalDateTimeSerializer.class)
@@ -66,27 +44,9 @@ public class CoffeeUser {
     LocalDateTime updatedAt;
 
     @Enumerated(EnumType.STRING)
-    UserActivityStatus status;
-
-    Integer meetingsCount;
-
-    @Enumerated(EnumType.STRING)
-    AstroSign astroSign;
-
-    @ManyToOne
-    @JsonBackReference(value = "hobby_users")
-    Hobby hobby;
-
-    @ManyToOne
-    @JsonBackReference(value = "department_users")
-    Department department;
-
-    @ManyToOne
-    @JsonBackReference(value = "office_users")
-    Office office;
+    OfficeStatus status;
 
     @OneToMany
-    @JsonManagedReference(value = "user_projects")
-    List<Project> projects;
+    @JsonManagedReference(value = "office_users")
+    List<CoffeeUser> users;
 }
-

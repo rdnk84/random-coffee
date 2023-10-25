@@ -1,4 +1,4 @@
-package com.example.randomcoffee.rest_api.dto;
+package com.example.randomcoffee.rest_api.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
@@ -12,7 +12,7 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class OfficeLocationRequest {
+public class OfficeRequest {
 
     String city;
     String country;

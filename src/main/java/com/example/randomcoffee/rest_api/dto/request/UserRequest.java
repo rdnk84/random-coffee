@@ -1,4 +1,4 @@
-package com.example.randomcoffee.rest_api.dto;
+package com.example.randomcoffee.rest_api.dto.request;
 
 import com.example.randomcoffee.model.enums.AstroSign;
 import com.example.randomcoffee.model.enums.Gender;
@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
+
+import java.util.Date;
 
 @Getter
 @Setter
@@ -20,8 +22,12 @@ public class UserRequest {
     String firstName;
     String lastName;
     String middleName;
-    Integer age;
     Gender gender;
     AstroSign astroSign;
 
+//    String cityLocation;
+//    Date startWorkDate;
+//    String hobby;
+//    String project;
+//    String department;
 }

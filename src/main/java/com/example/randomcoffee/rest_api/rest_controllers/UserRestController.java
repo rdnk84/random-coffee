@@ -1,8 +1,8 @@
 package com.example.randomcoffee.rest_api.rest_controllers;
 
-import com.example.randomcoffee.rest_api.dto.UserRequest;
-import com.example.randomcoffee.rest_api.dto.UserResponse;
-import com.example.randomcoffee.service.UserServiceImpl;
+import com.example.randomcoffee.rest_api.dto.request.UserRequest;
+import com.example.randomcoffee.rest_api.dto.response.UserResponse;
+import com.example.randomcoffee.service.impl.UserServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
