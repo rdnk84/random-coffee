@@ -6,6 +6,8 @@ import com.example.randomcoffee.service.impl.UserServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Random-coffee")
@@ -14,10 +16,11 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class UserRestController {
 
-private final UserServiceImpl userService;
+    private final UserServiceImpl userService;
 
-    @PostMapping("/")
+
     @Operation(summary = "Create user")
+    @PostMapping("/")
     public UserResponse createUser(@RequestBody UserRequest request) {
         return userService.createUser(request);
     }
@@ -28,4 +31,25 @@ private final UserServiceImpl userService;
         return userService.getUserDto(id);
     }
 
+    @Operation(summary = "Get CoffeeUsers by LastName")
+    @GetMapping("/lastName")
+    public Page<UserResponse> usersByLastName(@RequestParam(defaultValue = "1") Integer page,
+                                                  @RequestParam(defaultValue = "10") Integer perPage,
+                                                  @RequestParam(defaultValue = "email") String sort,
+                                                  @RequestParam(defaultValue = "ASC") Sort.Direction order,
+                                                  @RequestParam(required = false) String lastName) {
+        return userService.usersByLastName(page, perPage, sort, order, lastName);
+    }
+
+    @Operation(summary = "Delete CoffeeUser by id")
+    @DeleteMapping("/{id}")
+    public void deleteUser(@PathVariable Long id) {
+         userService.deleteUser(id);
+    }
+
+    @Operation(summary = "Update CoffeeUser")
+    @PutMapping("/{id}")
+    public UserResponse updateUser(@PathVariable Long id, @RequestBody UserRequest request) {
+        return userService.updateUser(id, request);
+    }
 }
