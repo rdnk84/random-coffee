@@ -18,17 +18,19 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import static org.springframework.http.HttpMethod.POST;
+import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-public class RestConfiguration extends WebSecurityConfigurerAdapter {
+public class RestConfiguration {
 
     private static final String[] SWAGGER_ENDPOINT = {
             "/**swagger**/**",
@@ -67,29 +69,58 @@ public class RestConfiguration extends WebSecurityConfigurerAdapter {
     }
 
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
+//    @Override
+//    protected void configure(HttpSecurity http) throws Exception {
+//
+//        CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManager());
+//        customAuthenticationFilter.setFilterProcessesUrl("/api/login");
+//
+//        http
+//                .cors()
+//                .and()
+//                .csrf().disable()
+//                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+//                .and()
+//                .authorizeRequests()
+//                .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+//                .antMatchers(HttpMethod.GET, "/users/**").permitAll()
+//                .antMatchers("/api/login/**", "/api/token/refresh/**").permitAll()
+//                .antMatchers(SWAGGER_ENDPOINT).permitAll()
+//                .antMatchers(POST, "/users/**").hasAnyAuthority("ROLE_ADMIN")
+//                .anyRequest().authenticated().and()
+//                .exceptionHandling().authenticationEntryPoint(authEntryPoint)
+//                .and()
+//                .addFilter(customAuthenticationFilter)
+//                .addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
+//    }
 
-        CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManager());
-        customAuthenticationFilter.setFilterProcessesUrl("/api/login");
+    @Configuration
+    public class SecurityConfiguration {
 
-        http
-                .cors()
-                .and()
-                .csrf().disable()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .authorizeRequests()
-                .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                .antMatchers(HttpMethod.GET, "/users/**").permitAll()
-                .antMatchers("/api/login/**", "/api/token/refresh/**").permitAll()
-                .antMatchers(SWAGGER_ENDPOINT).permitAll()
-                .antMatchers(POST, "/users/**").hasAnyAuthority("ROLE_ADMIN")
-                .anyRequest().authenticated().and()
-                .exceptionHandling().authenticationEntryPoint(authEntryPoint)
-                .and()
-                .addFilter(customAuthenticationFilter)
-                .addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
+        @Bean
+        public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+            http
+//                    .cors()
+//                    .and()
+//                    .csrf().disable()
+//                    .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+//                    .and()
+                    .authorizeRequests()
+                    .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                    .antMatchers(HttpMethod.GET, "/users/**").permitAll()
+                    .antMatchers("/api/login/**", "/api/token/refresh/**").permitAll()
+                    .antMatchers(SWAGGER_ENDPOINT).permitAll()
+                    .antMatchers(POST, "/users/**").hasAnyAuthority("ROLE_ADMIN")
+                    .anyRequest().authenticated().and()
+                    .exceptionHandling().authenticationEntryPoint(authEntryPoint)
+                    .and()
+                    .addFilter(customAuthenticationFilter)
+                    .addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
+
+
+            return http.build();
+        }
+
     }
 
 
