@@ -1,8 +1,10 @@
 package com.example.randomcoffee.config;
 
 
+import com.example.randomcoffee.config.auth.AuthFilter;
 import com.example.randomcoffee.model.auth.filters.CustomAuthenticationFilter;
 import com.example.randomcoffee.model.auth.filters.CustomAuthorizationFilter;
+import jakarta.servlet.Filter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;

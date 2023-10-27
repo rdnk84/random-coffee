@@ -1,10 +1,7 @@
 package com.example.randomcoffee.model.db.entity;
 
 
-import com.example.randomcoffee.model.enums.AstroSign;
-import com.example.randomcoffee.model.enums.Department;
-import com.example.randomcoffee.model.enums.Gender;
-import com.example.randomcoffee.model.enums.UserActivityStatus;
+import com.example.randomcoffee.model.enums.*;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -18,9 +15,13 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -30,7 +31,7 @@ import java.util.List;
 @Table(name = "users")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Tag(name = "сотрудник")
-public class CoffeeUser {
+public class CoffeeUser implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
@@ -81,6 +82,9 @@ public class CoffeeUser {
     @Enumerated(EnumType.STRING)
     Department department;
 
+    @Enumerated(EnumType.STRING)
+    Role role;
+
     @ManyToMany()
     @JoinTable(
             name = "user_hobby"
@@ -100,5 +104,41 @@ public class CoffeeUser {
             , inverseJoinColumns = @JoinColumn(name = "project_id")
     )
     List<Project> projects;
+
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(role.name()));
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 }
 
