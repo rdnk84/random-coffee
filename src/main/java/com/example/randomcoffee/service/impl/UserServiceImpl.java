@@ -35,8 +35,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponse getUserDto(Long id) {
-        CoffeeUser coffeeUser = userRepo.findById(id).orElse(new CoffeeUser());
-        UserResponse userFound = mapper.convertValue(coffeeUser, UserResponse.class);
+//        CoffeeUser coffeeUser = userRepo.findById(id).orElse(new CoffeeUser());
+        String errorMsg = String.format("User with id %d not found", id);
+        CoffeeUser user = userRepo.findById(id).orElseThrow(() -> new CustomException(errorMsg, HttpStatus.NOT_FOUND));
+        UserResponse userFound = mapper.convertValue(user, UserResponse.class);
         return userFound;
     }
 

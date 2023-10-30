@@ -7,10 +7,10 @@ spring:
     password: 357
     driver-class-name: org.postgresql.Driver
 
-  security:
-    user:
-      name: admin
-      password: admin
+#  security:
+#    user:
+#      name: admin
+#      password: admin
 
   jpa:
     database: postgresql
