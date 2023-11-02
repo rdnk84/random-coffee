@@ -60,11 +60,6 @@ public class UserServiceImpl implements UserService {
         if (!EmailValidator.getInstance().isValid(request.getEmail())) {
             throw new CustomException("invalid email", HttpStatus.BAD_REQUEST);
         }
-        String email = request.getEmail().trim();
-        userRepo.findByEmail(email)
-                .ifPresent(u -> {
-                    throw new CustomException("CoffeeUser with this email already exist", HttpStatus.BAD_REQUEST);
-                });
 
         user.setFirstName(StringUtils.isBlank(request.getFirstName()) ? user.getFirstName() : request.getFirstName());
         user.setLastName(StringUtils.isBlank(request.getLastName()) ? user.getLastName() : request.getLastName());

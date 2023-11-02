@@ -16,11 +16,11 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class MERequest {
-
-    LocalDateTime localDateTime;
+public class EventRequest {
     String title;
+    Integer peopleCount;
     EventTheme theme;
+    LocalDateTime localDateTime;
     EventLocation location;
 
 }
