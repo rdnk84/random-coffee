@@ -6,6 +6,8 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
 
+import java.util.Set;
+
 @Getter
 @Setter
 @SuperBuilder
@@ -16,5 +18,6 @@ public class EventResponse extends EventRequest {
 
     Long id;
     EventStatus status;
-    Integer peopleCount;
+
+
 }

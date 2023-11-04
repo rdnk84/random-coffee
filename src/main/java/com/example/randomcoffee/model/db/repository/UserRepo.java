@@ -19,7 +19,7 @@ public interface UserRepo extends JpaRepository<CoffeeUser, Long> {
     Optional<CoffeeUser> findById(Long id);
 
     //    @Query("select c from CoffeeUser c where c.status <> '3' and c.lastName like %:lastName%")
-    @Query(nativeQuery = true, value = "select * from users u where u.status <> 'DELETED' and u.last_name = :lastName")
+    @Query(nativeQuery = true, value = "select * from users u where u.status <> 'DELETED' and u.last_name = :lastName ")
     Page<CoffeeUser> findByLastNameNotDeleted(Pageable request, @Param("lastName") String lastName);
 
 

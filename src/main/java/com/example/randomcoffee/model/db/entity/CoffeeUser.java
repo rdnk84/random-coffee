@@ -4,6 +4,7 @@ package com.example.randomcoffee.model.db.entity;
 import com.example.randomcoffee.model.enums.*;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
@@ -11,10 +12,7 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 //import org.springframework.security.core.GrantedAuthority;
 //import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -25,16 +23,18 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
 @Entity
-@Builder
+@NoArgsConstructor
+//@Builder
 @Table(name = "users")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Tag(name = "сотрудник")
 //public class CoffeeUser implements UserDetails {
-public class CoffeeUser{
+public class CoffeeUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
@@ -56,7 +56,7 @@ public class CoffeeUser{
     @Column(name = "middle_name")
     String MiddleName;
 
-    @JsonFormat(pattern="yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     LocalDate hiringDate;
     @Enumerated(EnumType.STRING)
     Gender gender;
@@ -77,7 +77,6 @@ public class CoffeeUser{
     @Enumerated(EnumType.STRING)
     UserActivityStatus status;
 
-    Integer meetingsCount;
 
     @Enumerated(EnumType.STRING)
     AstroSign astroSign;
@@ -102,12 +101,23 @@ public class CoffeeUser{
 
     @ManyToMany()
     @JoinTable(
-             name = "user_project"
+            name = "user_project"
             , joinColumns = @JoinColumn(name = "user_id")
             , inverseJoinColumns = @JoinColumn(name = "project_id")
     )
     List<Project> projects;
 
+//    @ManyToOne
+//    @JsonBackReference(value = "event_users")
+//    MeetingEvent event;
+
+    @OneToMany
+    @JsonManagedReference(value = "events_user")
+    List<MeetingEvent> events;
+
+    @ManyToOne
+    @JsonBackReference(value = "event_users")
+    MeetingEvent event;
 
 //    @Override
 //    public Collection<? extends GrantedAuthority> getAuthorities() {

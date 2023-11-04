@@ -2,12 +2,16 @@ package com.example.randomcoffee.rest_api.dto.request;
 
 import com.example.randomcoffee.model.enums.EventLocation;
 import com.example.randomcoffee.model.enums.EventTheme;
+import com.example.randomcoffee.rest_api.dto.response.UserResponse;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -18,9 +22,8 @@ import java.time.LocalDateTime;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class EventRequest {
     String title;
-    Integer peopleCount;
-    EventTheme theme;
-    LocalDateTime localDateTime;
+    EventTheme eventTheme;
+    LocalDate meetingDate;
     EventLocation location;
-
+    List<Object> participants = new ArrayList<>();
 }

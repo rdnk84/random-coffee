@@ -30,5 +30,6 @@ public interface EventRepo extends JpaRepository<MeetingEvent, Long> {
 
     @Query(nativeQuery = true, value = "SELECT * FROM events e WHERE e.status <> 'CANCELLED'")
     Optional<MeetingEvent> findNotCancelled(Long id);
-
+    @Query(nativeQuery = true, value = "SELECT * FROM events e WHERE e.status <> 'CANCELLED'")
+    List<MeetingEvent> findAllNotCancelled();
 }

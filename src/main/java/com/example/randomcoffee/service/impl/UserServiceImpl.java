@@ -2,6 +2,8 @@ package com.example.randomcoffee.service.impl;
 
 import com.example.randomcoffee.exceptions.CustomException;
 import com.example.randomcoffee.model.db.entity.CoffeeUser;
+import com.example.randomcoffee.model.db.entity.MeetingEvent;
+import com.example.randomcoffee.model.db.repository.EventRepo;
 import com.example.randomcoffee.model.db.repository.UserRepo;
 import com.example.randomcoffee.model.enums.UserActivityStatus;
 import com.example.randomcoffee.rest_api.dto.request.UserRequest;
@@ -22,6 +24,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -30,6 +33,7 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
 
     private final UserRepo userRepo;
+    private final EventRepo eventRepo;
     private final ObjectMapper mapper;
 
 
@@ -104,5 +108,14 @@ public class UserServiceImpl implements UserService {
         user.setStatus(UserActivityStatus.DELETED);
         userRepo.save(user);
     }
+
+    public List<MeetingEvent> checkAllEventsByUser(Long userId) {
+        String errorMsg = String.format("User with id %d not found", userId);
+        CoffeeUser user = userRepo.findById(userId).orElseThrow(() -> new CustomException(errorMsg, HttpStatus.NOT_FOUND));
+        List<MeetingEvent> events = user.getEvents();
+        return events;
+    }
+
+
 
 }
