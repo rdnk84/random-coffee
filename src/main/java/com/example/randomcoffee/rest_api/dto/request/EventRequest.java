@@ -11,7 +11,9 @@ import lombok.experimental.SuperBuilder;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -25,5 +27,5 @@ public class EventRequest {
     EventTheme eventTheme;
     LocalDate meetingDate;
     EventLocation location;
-    List<Object> participants = new ArrayList<>();
+    Set<Object> participants = new HashSet<>();
 }

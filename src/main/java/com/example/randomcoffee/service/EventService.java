@@ -19,7 +19,7 @@ public interface EventService {
 
     EventResponse updateEvent(Long id, EventRequest request);
 
-    EventResponse createEvent(Long id, EventRequest request);
+    EventResponse createEvent(Long initiatorId, EventRequest request);
 
     void deleteEvent(Long id);
 

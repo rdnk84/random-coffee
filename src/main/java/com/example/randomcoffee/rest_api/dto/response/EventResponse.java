@@ -18,6 +18,6 @@ public class EventResponse extends EventRequest {
 
     Long id;
     EventStatus status;
-
-
+    String initiatorFirstName;
+    Long initiatorId;
 }

@@ -26,10 +26,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -63,20 +60,23 @@ public class EventServiceImpl implements EventService {
     @Override
     public EventResponse updateEvent(Long id, EventRequest request) {
         String errorMsg = String.format("Event with id %d not found", id);
-        MeetingEvent event = eventRepo.findNotCancelled(id).orElseThrow(() -> new CustomException(errorMsg, HttpStatus.NOT_FOUND));
-        event.setTitle(StringUtils.isBlank(request.getTitle()) ? event.getTitle() : request.getTitle());
+        MeetingEvent event = eventRepo.findById(id).orElseThrow(() -> new CustomException(errorMsg, HttpStatus.NOT_FOUND));
+        if (event != null && !event.getStatus().equals(EventStatus.CANCELLED)) {
+            event.setTitle(StringUtils.isBlank(request.getTitle()) ? event.getTitle() : request.getTitle());
+            event.setEventTheme(request.getEventTheme() == null ? event.getEventTheme() : request.getEventTheme());
+            event.setMeetingDate(request.getMeetingDate() == null ? event.getMeetingDate() : request.getMeetingDate());
+            event.setLocation(request.getLocation() == null ? event.getLocation() : request.getLocation());
+            event.setUpdatedAt(LocalDateTime.now());
 
-        event.setEventTheme(request.getEventTheme() == null ? event.getEventTheme() : request.getEventTheme());
-        event.setMeetingDate(request.getMeetingDate() == null ? event.getMeetingDate() : request.getMeetingDate());
-        event.setLocation(request.getLocation() == null ? event.getLocation() : request.getLocation());
-        event.setUpdatedAt(LocalDateTime.now());
-        MeetingEvent save = eventRepo.save(event);
-        return mapper.convertValue(save, EventResponse.class);
+            MeetingEvent save = eventRepo.save(event);
+            return mapper.convertValue(save, EventResponse.class);
+        }
+        throw new CustomException("This meeting was already cancelled", HttpStatus.NOT_FOUND);
     }
 
 
     @Override
-    public EventResponse createEvent(Long userId, EventRequest request) {
+    public EventResponse createEvent(Long initiatorId, EventRequest request) {
 
         if (StringUtils.isBlank(request.getTitle()) || request.getLocation() == null || request.getMeetingDate() == null) {
             throw new CustomException("Some of highlighted fields can not be blank", HttpStatus.BAD_REQUEST);
@@ -84,13 +84,17 @@ public class EventServiceImpl implements EventService {
         MeetingEvent event = mapper.convertValue(request, MeetingEvent.class);
         event.setStatus(EventStatus.INITIATED);
         event.setCreatedAt(LocalDateTime.now());
-        CoffeeUser initiator = userRepo.findById(userId).orElseThrow(() -> new CustomException("User not found", HttpStatus.NOT_FOUND));
-        event.setInitiator(initiator);
-        List<CoffeeUser> participants = event.getParticipants();
-        participants.add(initiator);
+        CoffeeUser initiator = userRepo.findById(initiatorId).orElseThrow(() -> new CustomException("User not found", HttpStatus.NOT_FOUND));
+        event.setInitiatorId(initiatorId);
 
+        Set<CoffeeUser> participants = event.getParticipants();
+        participants.add(initiator);
+        Set<MeetingEvent> events = initiator.getMeetingEvents();
+        events.add(event);
         MeetingEvent save = eventRepo.save(event);
+
         EventResponse response = mapper.convertValue(save, EventResponse.class);
+        response.setInitiatorFirstName(initiator.getFirstName());
         return response;
     }
 
@@ -98,52 +102,49 @@ public class EventServiceImpl implements EventService {
     public void deleteEvent(Long id) {
         String errorMsg = String.format("Event with id %d not found", id);
         MeetingEvent event = eventRepo.findById(id).orElseThrow(() -> new CustomException(errorMsg, HttpStatus.NOT_FOUND));
-        MeetingEvent notCancelled = eventRepo.findNotCancelled(id).orElseThrow(() -> new CustomException("not found", HttpStatus.NOT_FOUND));
-        if (notCancelled != null) {
+
+        if (!event.getStatus().equals(EventStatus.CANCELLED)) {
             event.setStatus(EventStatus.CANCELLED);
             event.setUpdatedAt(LocalDateTime.now());
             eventRepo.save(event);
+            return;
         }
+        throw new CustomException("This meeting was already cancelled", HttpStatus.NOT_FOUND);
     }
 
     @Override
     public Boolean ifEventAlreadyExist(LocalDateTime startDate, EventLocation location) {
         MeetingEvent byDateAndTime = eventRepo.findByDateAndLocation(startDate, location).orElseThrow(() -> new CustomException("not found", HttpStatus.NOT_FOUND));
         Long eventId = byDateAndTime.getId();
-        MeetingEvent notCancelled = eventRepo.findNotCancelled(eventId).orElseThrow(() -> new CustomException("not found", HttpStatus.NOT_FOUND));
-        if (byDateAndTime != null && notCancelled != null) {
+        String errorMsg = String.format("Event with id %d not found", eventId);
+        MeetingEvent event = eventRepo.findById(eventId).orElseThrow(() -> new CustomException(errorMsg, HttpStatus.NOT_FOUND));
+        if (byDateAndTime != null && !event.getStatus().equals(EventStatus.CANCELLED)) {
             return true;
         }
         return false;
     }
 
-    public EventResponse sendEvent(Long userid, Long eventId) {
+    public void sendEvent(Long userid, Long eventId) {
         String userNotFound = String.format("User with id %d not found", userid);
         CoffeeUser user = userRepo.findById(userid).orElseThrow(() -> new CustomException(userNotFound, HttpStatus.NOT_FOUND));
         String eventNotFound = String.format("Event with id %d not found", eventId);
         MeetingEvent event = eventRepo.findById(eventId).orElseThrow(() -> new CustomException(eventNotFound, HttpStatus.NOT_FOUND));
-        List<CoffeeUser> participants = event.getParticipants();
-        participants.add(user);
-
-        event.setUpdatedAt(LocalDateTime.now());
-        MeetingEvent save = eventRepo.save(event);
-        EventResponse result = mapper.convertValue(save, EventResponse.class);
-        return result;
+        if (event.getInitiatorId() != userid) {
+            Set<CoffeeUser> participants = event.getParticipants();
+            participants.add(user);
+            event.setUpdatedAt(LocalDateTime.now());
+            eventRepo.save(event);
+            return;
+        }
+        throw new CustomException("This User is initiator of the Event", HttpStatus.NOT_FOUND);
     }
 
-
-//    public void eventAccept(Long eventId, Long userid, EventAcceptane acceptance) {
-//        String eventNotFound = String.format("Event with id %d not found", eventId);
-//        MeetingEvent event = eventRepo.findById(eventId).orElseThrow(() -> new CustomException(eventNotFound, HttpStatus.NOT_FOUND));
-//        event.setAcceptane(acceptance);
-//        if(event.getAcceptane().equals(EventAcceptane.DECLINE)){
-//            String userNotFound = String.format("User with id %d not found", userid);
-//            CoffeeUser user = userRepo.findById(userid).orElseThrow(() -> new CustomException(userNotFound, HttpStatus.NOT_FOUND));
-//            List<CoffeeUser> users = event.getUsers();
-//            users.remove(user);
-//            event.setPeopleCount(users.size());
-//        }
-//        event.setUpdatedAt(LocalDateTime.now());
-//    }
+    public Set<CoffeeUser> checkAllParticipants(Long eventId) {
+        String eventNotFound = String.format("Event with id %d not found", eventId);
+        MeetingEvent event = eventRepo.findById(eventId).orElseThrow(() -> new CustomException(eventNotFound, HttpStatus.NOT_FOUND));
+        Set<CoffeeUser> participants = event.getParticipants();
+        Integer size = participants.size();
+        return participants;
+    }
 
 }

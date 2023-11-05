@@ -16,4 +16,5 @@ public class UserResponse extends UserRequest {
 
     Long id;
     OfficeResponse office;
+
 }

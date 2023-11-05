@@ -1,5 +1,6 @@
 package com.example.randomcoffee.rest_api.rest_controllers;
 
+import com.example.randomcoffee.model.db.entity.MeetingEvent;
 import com.example.randomcoffee.rest_api.dto.request.UserRequest;
 import com.example.randomcoffee.rest_api.dto.response.UserResponse;
 import com.example.randomcoffee.service.impl.UserServiceImpl;
@@ -9,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Set;
 
 @Tag(name = "Random-coffee")
 @RestController
@@ -51,5 +54,17 @@ public class UserRestController {
     @PutMapping("/{id}")
     public UserResponse updateUser(@PathVariable Long id, @RequestBody UserRequest request) {
         return userService.updateUser(id, request);
+    }
+
+    @Operation(summary = "Все мероприятия пользователя")
+    @GetMapping("/{userId}/all-events")
+    public Set<MeetingEvent> getAllEvents(@PathVariable Long userId) {
+        return userService.checkAllEvents(userId);
+    }
+
+    @Operation(summary = "Действие пользователя по принятию или отклонению мероприятия")
+    @PostMapping("/{eventId}/{userId}")
+    public String handleEvents(@RequestParam Boolean accept, @PathVariable Long eventId, @PathVariable Long userId){
+      return   userService.handleEvent(accept, eventId, userId);
     }
 }

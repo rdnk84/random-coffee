@@ -6,6 +6,7 @@ import com.example.randomcoffee.model.enums.EventStatus;
 import com.example.randomcoffee.model.enums.EventTheme;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -20,10 +21,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Getter
 @Setter
@@ -53,6 +51,10 @@ public class MeetingEvent {
     @Enumerated(EnumType.STRING)
     EventStatus status;
 
+
+    @Column(name = "initiator_id")
+    Long initiatorId;
+
 //    @Enumerated(EnumType.STRING)
 //    EventAcceptane acceptance;
 
@@ -66,11 +68,22 @@ public class MeetingEvent {
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     LocalDateTime updatedAt;
 
-    @ManyToOne
-    @JsonBackReference(value = "events_user")
-    CoffeeUser initiator;
 
-    @OneToMany
-    @JsonManagedReference(value = "event_users")
-    List<CoffeeUser> participants;
+    @ManyToMany(mappedBy = "meetingEvents")
+    @JsonIgnore
+//    @JoinTable(
+//            name = "events_users"
+//            , joinColumns = @JoinColumn(name = "event_id")
+//            , inverseJoinColumns = @JoinColumn(name = "user_id")
+//    )
+    Set<CoffeeUser> participants = new HashSet<>();
+//
+//    @OneToMany
+//    @JsonManagedReference(value = "event_users")
+//    List<CoffeeUser> participants;
+
+
+//    @ManyToOne
+//    @JsonBackReference(value = "events_user")
+//    CoffeeUser initiator;
 }

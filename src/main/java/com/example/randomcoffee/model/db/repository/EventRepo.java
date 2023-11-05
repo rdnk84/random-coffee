@@ -12,10 +12,14 @@ import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public interface EventRepo extends JpaRepository<MeetingEvent, Long> {
 
     Optional<MeetingEvent> findById(Long id);
+
+//    @Query(nativeQuery = true, value = "SELECT * FROM events e WHERE ")
+//    Set<MeetingEvent> findAllByUserId(@Param("userId") List userId);
 
     //    @Query(nativeQuery = true, value = "SELECT * FROM events e WHERE e.meeting_date > 'pubDateStart' AND e.meeting_date < NOW()")
 //    List<MeetingEvent> findByDate(@Param("currDate") LocalDateTime currDate, @Param("dateEnd") Date dateEnd);
@@ -29,7 +33,9 @@ public interface EventRepo extends JpaRepository<MeetingEvent, Long> {
     Optional<MeetingEvent> findByDateAndLocation(@Param("dateStart") LocalDateTime dateStart, @Param("location")EventLocation location);
 
     @Query(nativeQuery = true, value = "SELECT * FROM events e WHERE e.status <> 'CANCELLED'")
-    Optional<MeetingEvent> findNotCancelled(Long id);
+    List<MeetingEvent> findNotCancelled(Long id);
     @Query(nativeQuery = true, value = "SELECT * FROM events e WHERE e.status <> 'CANCELLED'")
     List<MeetingEvent> findAllNotCancelled();
+
+
 }

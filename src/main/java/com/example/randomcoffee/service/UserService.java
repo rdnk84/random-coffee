@@ -18,4 +18,6 @@ public interface UserService {
     UserResponse createUser(UserRequest request);
 
     void deleteUser(Long id);
+
+    String handleEvent(Boolean accept, Long eventId, Long userId);
 }

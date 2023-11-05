@@ -4,6 +4,7 @@ package com.example.randomcoffee.model.db.entity;
 import com.example.randomcoffee.model.enums.*;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -20,10 +21,7 @@ import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Getter
 @Setter
@@ -107,17 +105,23 @@ public class CoffeeUser {
     )
     List<Project> projects;
 
+//    @OneToMany
+//    @JsonManagedReference(value = "events_user")
+//    List<MeetingEvent> events;
+
+//    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+//    @JoinTable(name = "events_users", joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
+//             inverseJoinColumns = {@JoinColumn(name = "event_id", referencedColumnName = "id")})
+//    List<MeetingEvent> events;
+
+    @ManyToMany
+    @JoinTable(name = "users_events", joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "event_id"))
+    Set<MeetingEvent> meetingEvents;
+
 //    @ManyToOne
 //    @JsonBackReference(value = "event_users")
 //    MeetingEvent event;
-
-    @OneToMany
-    @JsonManagedReference(value = "events_user")
-    List<MeetingEvent> events;
-
-    @ManyToOne
-    @JsonBackReference(value = "event_users")
-    MeetingEvent event;
 
 //    @Override
 //    public Collection<? extends GrantedAuthority> getAuthorities() {
