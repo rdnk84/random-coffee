@@ -24,6 +24,9 @@ public interface UserRepo extends JpaRepository<CoffeeUser, Long> {
     @Query(nativeQuery = true, value = "select * from users u where u.status <> 'DELETED' and u.last_name = :lastName ")
     Page<CoffeeUser> findByLastNameNotDeleted(Pageable request, @Param("lastName") String lastName);
 
+    @Query(nativeQuery = true, value = "select * from users u")
+    Page<CoffeeUser> findAll(Pageable request);
+
 //    @Query(nativeQuery = true, value = "select * from users u where u.")
 //    Set<MeetingEvent> findAllByEventId();
 }

@@ -1,5 +1,6 @@
 package com.example.randomcoffee.rest_api.dto.request;
 
+import com.example.randomcoffee.model.enums.Region;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -14,5 +15,6 @@ import lombok.experimental.SuperBuilder;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CountryRequest {
 
-    String country;
+    String title;
+    Region region;
 }

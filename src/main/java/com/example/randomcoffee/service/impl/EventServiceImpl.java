@@ -5,12 +5,10 @@ import com.example.randomcoffee.model.db.entity.CoffeeUser;
 import com.example.randomcoffee.model.db.entity.MeetingEvent;
 import com.example.randomcoffee.model.db.repository.EventRepo;
 import com.example.randomcoffee.model.db.repository.UserRepo;
-import com.example.randomcoffee.model.enums.EventAcceptane;
 import com.example.randomcoffee.model.enums.EventLocation;
 import com.example.randomcoffee.model.enums.EventStatus;
 import com.example.randomcoffee.rest_api.dto.request.EventRequest;
 import com.example.randomcoffee.rest_api.dto.response.EventResponse;
-import com.example.randomcoffee.rest_api.dto.response.UserResponse;
 import com.example.randomcoffee.service.EventService;
 import com.example.randomcoffee.utils.PaginationUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -24,7 +22,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -61,7 +58,7 @@ public class EventServiceImpl implements EventService {
     public EventResponse updateEvent(Long id, EventRequest request) {
         String errorMsg = String.format("Event with id %d not found", id);
         MeetingEvent event = eventRepo.findById(id).orElseThrow(() -> new CustomException(errorMsg, HttpStatus.NOT_FOUND));
-        if (event != null && !event.getStatus().equals(EventStatus.CANCELLED)) {
+        if (!event.getStatus().equals(EventStatus.CANCELLED)) {
             event.setTitle(StringUtils.isBlank(request.getTitle()) ? event.getTitle() : request.getTitle());
             event.setEventTheme(request.getEventTheme() == null ? event.getEventTheme() : request.getEventTheme());
             event.setMeetingDate(request.getMeetingDate() == null ? event.getMeetingDate() : request.getMeetingDate());

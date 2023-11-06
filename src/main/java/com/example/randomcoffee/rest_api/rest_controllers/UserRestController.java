@@ -28,13 +28,13 @@ public class UserRestController {
         return userService.createUser(request);
     }
 
-    @Operation(summary = "Get CoffeeUser by id")
+    @Operation(summary = "Получить пользователя по id")
     @GetMapping("/{id}")
     public UserResponse getUser(@PathVariable Long id) {
         return userService.getUserDto(id);
     }
 
-    @Operation(summary = "Get CoffeeUsers by LastName")
+    @Operation(summary = "Получить пользователей по фамилии")
     @GetMapping("/lastName")
     public Page<UserResponse> usersByLastName(@RequestParam(defaultValue = "1") Integer page,
                                                   @RequestParam(defaultValue = "10") Integer perPage,
@@ -44,13 +44,22 @@ public class UserRestController {
         return userService.usersByLastName(page, perPage, sort, order, lastName);
     }
 
-    @Operation(summary = "Delete CoffeeUser by id")
+    @Operation(summary = "Получить всех пользователей")
+    @GetMapping("/all")
+    public Page<UserResponse> getAllUsers(@RequestParam(defaultValue = "1") Integer page,
+                                              @RequestParam(defaultValue = "10") Integer perPage,
+                                              @RequestParam(defaultValue = "email") String sort,
+                                              @RequestParam(defaultValue = "ASC") Sort.Direction order) {
+        return userService.allUsers(page, perPage, sort, order);
+    }
+
+    @Operation(summary = "Удалить пользователя по id")
     @DeleteMapping("/{id}")
     public void deleteUser(@PathVariable Long id) {
          userService.deleteUser(id);
     }
 
-    @Operation(summary = "Update CoffeeUser")
+    @Operation(summary = "Изменить данные пользователя")
     @PutMapping("/{id}")
     public UserResponse updateUser(@PathVariable Long id, @RequestBody UserRequest request) {
         return userService.updateUser(id, request);

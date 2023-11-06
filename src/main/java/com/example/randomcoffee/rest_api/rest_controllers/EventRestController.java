@@ -40,7 +40,7 @@ public class EventRestController {
         service.deleteEvent(id);
     }
 
-    @Operation(summary = "Изменить мероприятие")
+    @Operation(summary = "Внести изменения в мероприятие")
     @PutMapping("/{id}")
     public EventResponse updateEvent(@PathVariable Long id, @RequestBody EventRequest request) {
         return service.updateEvent(id, request);

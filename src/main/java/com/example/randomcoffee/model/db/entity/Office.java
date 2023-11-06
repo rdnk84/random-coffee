@@ -1,6 +1,7 @@
 package com.example.randomcoffee.model.db.entity;
 
 import com.example.randomcoffee.model.enums.OfficeStatus;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -47,5 +48,7 @@ public class Office {
     @JsonManagedReference(value = "office_users")
     List<CoffeeUser> users;
 
-
+    @ManyToOne
+    @JsonBackReference(value = "offices_country")
+    Country country;
 }

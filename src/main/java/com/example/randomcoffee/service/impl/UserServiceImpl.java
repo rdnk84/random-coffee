@@ -40,7 +40,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponse getUserDto(Long id) {
-//        CoffeeUser coffeeUser = userRepo.findById(id).orElse(new CoffeeUser());
+
         String errorMsg = String.format("User with id %d not found", id);
         CoffeeUser user = userRepo.findById(id).orElseThrow(() -> new CustomException(errorMsg, HttpStatus.NOT_FOUND));
         UserResponse userFound = mapper.convertValue(user, UserResponse.class);
@@ -120,11 +120,22 @@ public class UserServiceImpl implements UserService {
         if(accept = false) {
             Set<CoffeeUser> participants = event.getParticipants();
             participants.remove(user);
+            eventRepo.save(event);
             answer = "This colleague has declined the meeting";
             return answer;
         }
         answer = "This colleague has accepted the meeting";
         return answer;
+    }
+
+    @Override
+    public Page<UserResponse> allUsers(Integer page, Integer perPage, String sort, Sort.Direction order) {
+        Pageable pageRequest = PaginationUtil.getPageRequest(page, perPage, sort, order);
+        Page<CoffeeUser> usersPage = userRepo.findAll(pageRequest);
+        List<UserResponse> usersList = usersPage.getContent().stream()
+                .map(u -> mapper.convertValue(u, UserResponse.class))
+                .collect(Collectors.toList());
+        return new PageImpl<>(usersList);
     }
 
     public Set<MeetingEvent> checkAllEvents(Long userId) {

@@ -1,5 +1,6 @@
 package com.example.randomcoffee.service;
 
+import com.example.randomcoffee.model.db.entity.CoffeeUser;
 import com.example.randomcoffee.rest_api.dto.request.UserRequest;
 import com.example.randomcoffee.rest_api.dto.response.UserResponse;
 import org.springframework.data.domain.Page;
@@ -20,4 +21,5 @@ public interface UserService {
     void deleteUser(Long id);
 
     String handleEvent(Boolean accept, Long eventId, Long userId);
+    Page<UserResponse> allUsers(Integer page, Integer perPage, String sort, Sort.Direction order);
 }
