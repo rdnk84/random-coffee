@@ -14,8 +14,8 @@ public interface CountryRepo extends JpaRepository<Country, Long> {
 
     Optional<Country> findById(Long id);
 
-    @Query(nativeQuery = true, value = "select * from countries c where c.title = :title ")
-    Optional<Country> findByTitle(@Param("title") String title);
+//    @Query(nativeQuery = true, value = "select * from countries c where c.title = :title ")
+    Optional<Country> findByTitle(String title);
     @Override
     List<Country> findAll();
 

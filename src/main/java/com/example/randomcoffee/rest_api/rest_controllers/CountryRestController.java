@@ -43,6 +43,12 @@ public class CountryRestController {
         return countryService.countriesByRegion(region);
     }
 
+    @Operation(summary = "Найти страну по названию")
+    @GetMapping("/by-title/")
+    public CountryResponse findByRegion(@RequestParam String title) {
+        return countryService.countryByTitle(title);
+    }
+
     @Operation(summary = "Удалить страну")
     @DeleteMapping("/{id}")
     public void deleteCountry(@PathVariable Long id){

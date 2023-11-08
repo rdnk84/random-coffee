@@ -17,5 +17,6 @@ public interface CountryService {
     CountryResponse createCountry(CountryRequest request);
 
     void deleteCountry(Long id);
+    CountryResponse countryByTitle(String title);
 
 }

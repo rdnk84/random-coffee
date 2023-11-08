@@ -1,13 +1,22 @@
 package com.example.randomcoffee.model.db.entity;
 
+import com.example.randomcoffee.model.enums.EntityStatus;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -21,14 +30,29 @@ public class Hobby {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
+    @NotEmpty
+    @Column(unique = true)
     String title;
+
+    @Column(columnDefinition = "TEXT")
     String description;
 
-    @ManyToMany()
-    @JoinTable(
-            name = "hobby_user"
-            , joinColumns = @JoinColumn(name = "hobby_id")
-            , inverseJoinColumns = @JoinColumn(name = "user_id")
-    )
-    List<CoffeeUser> users;
+    @Enumerated(EnumType.STRING)
+    EntityStatus status;
+
+    @Column(name = "created_at")
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    LocalDateTime createdAt;
+
+    @Column(name = "updated_at")
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    LocalDateTime updatedAt;
+
+
+
+    @ManyToMany(mappedBy = "hobbies")
+    @JsonIgnore
+    Set<CoffeeUser> colleagues;
 }

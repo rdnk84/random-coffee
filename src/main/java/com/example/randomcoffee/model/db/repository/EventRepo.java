@@ -30,12 +30,13 @@ public interface EventRepo extends JpaRepository<MeetingEvent, Long> {
 //    Page<MeetingEvent> findByParticipant();
 
     @Query(nativeQuery = true, value = "SELECT * FROM events e WHERE e.meeting_date = :dateStart AND e.location = :location")
-    Optional<MeetingEvent> findByDateAndLocation(@Param("dateStart") LocalDateTime dateStart, @Param("location")EventLocation location);
+    Optional<MeetingEvent> findByDateAndLocation(@Param("dateStart") LocalDateTime dateStart, @Param("location") EventLocation location);
 
     @Query(nativeQuery = true, value = "SELECT * FROM events e WHERE e.status <> 'CANCELLED'")
     List<MeetingEvent> findNotCancelled(Long id);
+
     @Query(nativeQuery = true, value = "SELECT * FROM events e WHERE e.status <> 'CANCELLED'")
     List<MeetingEvent> findAllNotCancelled();
 
-
+//    Set<MeetingEvent> findAllByUserId(Long id);
 }

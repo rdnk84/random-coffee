@@ -23,6 +23,4 @@ public class HobbyRequest {
 
     String title;
     String description;
-
-
 }

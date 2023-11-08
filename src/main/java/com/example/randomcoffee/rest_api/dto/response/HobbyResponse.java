@@ -1,5 +1,6 @@
 package com.example.randomcoffee.rest_api.dto.response;
 
+import com.example.randomcoffee.model.enums.EntityStatus;
 import com.example.randomcoffee.rest_api.dto.request.HobbyRequest;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -14,4 +15,5 @@ import lombok.experimental.SuperBuilder;
 public class HobbyResponse extends HobbyRequest {
 
     Long id;
+    EntityStatus status;
 }

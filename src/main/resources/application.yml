@@ -17,14 +17,16 @@ spring:
     show-sql: true
     generate-ddl: true
     hibernate:
-       ddl-auto: create-drop
-#        ddl-auto: update
+#       ddl-auto: create-drop
+        ddl-auto: update
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         jdbc:
+          batch_size: 10
           lob:
             non_contextual_creation: true
+
 logging:
   level:
     org:

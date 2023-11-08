@@ -14,12 +14,14 @@ import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
 @Entity
-@Table(name = "offices")
+@Table(name = "office")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Office {
 
@@ -29,7 +31,6 @@ public class Office {
 
     @Column(name = "city")
     String city;
-
 
     @Column(name = "created_at")
     @JsonSerialize(using = LocalDateTimeSerializer.class)
@@ -46,7 +47,7 @@ public class Office {
 
     @OneToMany
     @JsonManagedReference(value = "office_users")
-    List<CoffeeUser> users;
+    Set<CoffeeUser> colleagues;
 
     @ManyToOne
     @JsonBackReference(value = "offices_country")

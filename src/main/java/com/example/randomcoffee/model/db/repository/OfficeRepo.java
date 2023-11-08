@@ -10,5 +10,6 @@ import java.util.Optional;
 public interface OfficeRepo extends JpaRepository<Office, Long> {
 
     @Override
-    Optional<Office> findById(Long aLong);
+    Optional<Office> findById(Long id);
+
 }

@@ -30,7 +30,7 @@ import java.util.*;
 //@Builder
 @Table(name = "users")
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Tag(name = "сотрудник")
+@Tag(name = "сотрудники")
 //public class CoffeeUser implements UserDetails {
 public class CoffeeUser {
     @Id
@@ -114,10 +114,10 @@ public class CoffeeUser {
 //             inverseJoinColumns = {@JoinColumn(name = "event_id", referencedColumnName = "id")})
 //    List<MeetingEvent> events;
 
-    @ManyToMany
+    @ManyToMany( cascade = CascadeType.ALL)
     @JoinTable(name = "users_events", joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "event_id"))
-    Set<MeetingEvent> meetingEvents;
+    Set<MeetingEvent> events = new HashSet<>();
 
 //    @ManyToOne
 //    @JsonBackReference(value = "event_users")

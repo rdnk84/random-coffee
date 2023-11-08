@@ -86,10 +86,9 @@ public class EventServiceImpl implements EventService {
 
         Set<CoffeeUser> participants = event.getParticipants();
         participants.add(initiator);
-        Set<MeetingEvent> events = initiator.getMeetingEvents();
+        Set<MeetingEvent> events = initiator.getEvents();
         events.add(event);
         MeetingEvent save = eventRepo.save(event);
-
         EventResponse response = mapper.convertValue(save, EventResponse.class);
         response.setInitiatorFirstName(initiator.getFirstName());
         return response;
@@ -130,7 +129,11 @@ public class EventServiceImpl implements EventService {
             Set<CoffeeUser> participants = event.getParticipants();
             participants.add(user);
             event.setUpdatedAt(LocalDateTime.now());
-            eventRepo.save(event);
+            event.setParticipants(participants);
+//            SortedSet<CoffeeUser> sortedSet = new TreeSet<>();
+//            Iterator<CoffeeUser> iterator = sortedSet.iterator();
+//            Iterable<CoffeeUser> iterable = (Iterable<CoffeeUser>) sortedSet;
+//            eventRepo.saveAllAndFlush(iterable);
             return;
         }
         throw new CustomException("This User is initiator of the Event", HttpStatus.NOT_FOUND);

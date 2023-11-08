@@ -1,5 +1,6 @@
 package com.example.randomcoffee.rest_api.dto.request;
 
+import com.example.randomcoffee.rest_api.dto.response.CountryResponse;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -15,5 +16,7 @@ import lombok.experimental.SuperBuilder;
 public class OfficeRequest {
 
     String city;
+    Long countryId;
+    String countryName;
 
 }

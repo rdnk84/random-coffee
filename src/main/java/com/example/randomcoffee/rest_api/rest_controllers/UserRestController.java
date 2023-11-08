@@ -71,9 +71,15 @@ public class UserRestController {
         return userService.checkAllEvents(userId);
     }
 
-    @Operation(summary = "Действие пользователя по принятию или отклонению мероприятия")
-    @PostMapping("/{eventId}/{userId}")
-    public String handleEvents(@RequestParam Boolean accept, @PathVariable Long eventId, @PathVariable Long userId){
-      return   userService.handleEvent(accept, eventId, userId);
+    @Operation(summary = "Принятие пользователем мероприятия")
+    @PostMapping("/accept/{eventId}/{userId}")
+    public String acceptEvent(@PathVariable Long eventId, @PathVariable Long userId){
+      return   userService.acceptEvent(eventId, userId);
+    }
+
+    @Operation(summary = "Отклонение пользователем мероприятия")
+    @PostMapping("/decline/{eventId}/{userId}")
+    public String declineEvent(@PathVariable Long eventId, @PathVariable Long userId){
+        return   userService.declineEvent(eventId, userId);
     }
 }

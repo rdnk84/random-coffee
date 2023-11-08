@@ -105,27 +105,29 @@ public class UserServiceImpl implements UserService {
     public void deleteUser(Long id) {
         String errorMsg = String.format("User with id %d not found", id);
         CoffeeUser user = userRepo.findById(id).orElseThrow(() -> new CustomException(errorMsg, HttpStatus.NOT_FOUND));
+
         user.setUpdatedAt(LocalDateTime.now());
         user.setStatus(UserActivityStatus.DELETED);
         userRepo.save(user);
     }
 
     @Override
-    public String handleEvent(Boolean accept, Long eventId, Long userId) {
+    public String declineEvent(Long eventId, Long userId) {
         String userNotFound = String.format("User with id %d not found", userId);
         CoffeeUser user = userRepo.findById(userId).orElseThrow(() -> new CustomException(userNotFound, HttpStatus.NOT_FOUND));
         String eventNotFound = String.format("Event with id %d not found", eventId);
         MeetingEvent event = eventRepo.findById(eventId).orElseThrow(() -> new CustomException(eventNotFound, HttpStatus.NOT_FOUND));
-        String answer = "";
-        if(accept = false) {
-            Set<CoffeeUser> participants = event.getParticipants();
-            participants.remove(user);
-            eventRepo.save(event);
-            answer = "This colleague has declined the meeting";
-            return answer;
-        }
-        answer = "This colleague has accepted the meeting";
-        return answer;
+        Set<CoffeeUser> participants = event.getParticipants();
+        participants.remove(user);
+        eventRepo.save(event);
+        return "This colleague" + user.getFirstName() + " " + user.getLastName() + " has declined the meeting";
+    }
+
+    @Override
+    public String acceptEvent(Long eventId, Long userId) {
+        String userNotFound = String.format("User with id %d not found", userId);
+        CoffeeUser user = userRepo.findById(userId).orElseThrow(() -> new CustomException(userNotFound, HttpStatus.NOT_FOUND));
+        return "This colleague " + user.getFirstName() + " " + user.getLastName() + " has accepted the meeting";
     }
 
     @Override
@@ -141,10 +143,9 @@ public class UserServiceImpl implements UserService {
     public Set<MeetingEvent> checkAllEvents(Long userId) {
         String errorMsg = String.format("User with id %d not found", userId);
         CoffeeUser user = userRepo.findById(userId).orElseThrow(() -> new CustomException(errorMsg, HttpStatus.NOT_FOUND));
-        Set<MeetingEvent> events = user.getMeetingEvents();
+        Set<MeetingEvent> events = user.getEvents();
         return events;
     }
-
 
 
 }

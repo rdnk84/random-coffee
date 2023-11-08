@@ -14,5 +14,6 @@ import lombok.experimental.SuperBuilder;
 public class OfficeResponse extends OfficeRequest {
 
     Long id;
-    CountryResponse country;
+    String countryName;
+
 }

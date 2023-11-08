@@ -23,7 +23,7 @@ import java.util.*;
 @Entity
 @NoArgsConstructor
 //@Builder
-@Table(name = "events")
+@Table(name = "event")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Tag(name = "детали встречи")
 public class MeetingEvent {
@@ -64,7 +64,7 @@ public class MeetingEvent {
     LocalDateTime updatedAt;
 
 
-    @ManyToMany(mappedBy = "meetingEvents")
+    @ManyToMany(mappedBy = "events")
     @JsonIgnore
 //    @JoinTable(
 //            name = "events_users"

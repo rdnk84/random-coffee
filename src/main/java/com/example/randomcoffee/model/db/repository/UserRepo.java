@@ -27,6 +27,9 @@ public interface UserRepo extends JpaRepository<CoffeeUser, Long> {
     @Query(nativeQuery = true, value = "select * from users u")
     Page<CoffeeUser> findAll(Pageable request);
 
+//    Set<CoffeeUser> findCoffeeUsersByMeetingEventId(Long id);
+
 //    @Query(nativeQuery = true, value = "select * from users u where u.")
-//    Set<MeetingEvent> findAllByEventId();
+//   Set<CoffeeUser> findAllByEventId();
+
 }

@@ -31,6 +31,7 @@ public class Country {
     Long id;
 
     @NotEmpty
+    @Column(unique = true)
     String title;
 
     @Enumerated(EnumType.STRING)

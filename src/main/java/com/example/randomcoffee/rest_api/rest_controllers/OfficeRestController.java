@@ -17,14 +17,29 @@ public class OfficeRestController {
     private final OfficeServiceImpl officeService;
 
     @PostMapping("/")
-    @Operation(summary = "Create new office")
+    @Operation(summary = "Заведение нового офиса")
     public OfficeResponse createOffice(@RequestBody OfficeRequest request) {
+
         return officeService.createOffice(request);
     }
 
-    @Operation(summary = "Get office by id")
+    @Operation(summary = "Найти офис по id")
     @GetMapping("/{id}")
     public OfficeResponse getOffice(@PathVariable Long id) {
         return officeService.getOfficeById(id);
+    }
+
+    @Operation(summary = "Удалить офис")
+    @DeleteMapping("/{id}")
+    public void deleteOffice(@PathVariable Long id) {
+
+         officeService.deleteOffice(id);
+    }
+
+    @PostMapping("/{id}")
+    @Operation(summary = "Внести изменения в существующий офис")
+    public OfficeResponse updateOffice(@PathVariable Long id, @RequestBody OfficeRequest request) {
+
+        return officeService.updateOffice(id, request);
     }
 }

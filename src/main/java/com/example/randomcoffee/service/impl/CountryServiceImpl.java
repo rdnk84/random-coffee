@@ -64,8 +64,17 @@ public class CountryServiceImpl implements CountryService {
     }
 
     @Override
+    public CountryResponse countryByTitle(String title) {
+        String errorMsg = String.format("User with title %s not found", title);
+        Country country = countryRepo.findByTitle(title).orElseThrow(() -> new CustomException(errorMsg, HttpStatus.NOT_FOUND));
+        CountryResponse result = mapper.convertValue(country, CountryResponse.class);
+        return result;
+    }
+
+    @Override
     public CountryResponse createCountry(CountryRequest request) {
-        countryRepo.findByTitle(request.getTitle())
+        String countryTitle = request.getTitle();
+        countryRepo.findByTitle(countryTitle)
                 .ifPresent(c -> {
                     throw new CustomException("This country already exists", HttpStatus.BAD_REQUEST);
                 });

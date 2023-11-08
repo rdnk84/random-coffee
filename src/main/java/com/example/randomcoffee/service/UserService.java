@@ -20,6 +20,7 @@ public interface UserService {
 
     void deleteUser(Long id);
 
-    String handleEvent(Boolean accept, Long eventId, Long userId);
+    String declineEvent(Long eventId, Long userId);
+    String acceptEvent(Long eventId, Long userId);
     Page<UserResponse> allUsers(Integer page, Integer perPage, String sort, Sort.Direction order);
 }
