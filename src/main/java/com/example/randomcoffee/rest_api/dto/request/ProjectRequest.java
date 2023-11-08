@@ -16,4 +16,5 @@ public class ProjectRequest {
 
     String title;
     String description;
+    String projectCode;
 }
