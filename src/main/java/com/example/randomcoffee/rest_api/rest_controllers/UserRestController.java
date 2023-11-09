@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
 
-@Tag(name = "Random-coffee")
+@Tag(name = "Пользователи")
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
@@ -22,7 +22,7 @@ public class UserRestController {
     private final UserServiceImpl userService;
 
 
-    @Operation(summary = "Create user")
+    @Operation(summary = "Создать пользователя")
     @PostMapping("/")
     public UserResponse createUser(@RequestBody UserRequest request) {
         return userService.createUser(request);

@@ -3,6 +3,7 @@ package com.example.randomcoffee.service.impl;
 import com.example.randomcoffee.exceptions.CustomException;
 import com.example.randomcoffee.model.db.entity.CoffeeUser;
 import com.example.randomcoffee.model.db.entity.MeetingEvent;
+import com.example.randomcoffee.model.db.entity.Office;
 import com.example.randomcoffee.model.db.repository.EventRepo;
 import com.example.randomcoffee.model.db.repository.UserRepo;
 import com.example.randomcoffee.model.enums.UserActivityStatus;
@@ -36,6 +37,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepo userRepo;
     private final EventRepo eventRepo;
     private final ObjectMapper mapper;
+    private final OfficeServiceImpl officeService;
 
 
     @Override
@@ -45,6 +47,13 @@ public class UserServiceImpl implements UserService {
         CoffeeUser user = userRepo.findById(id).orElseThrow(() -> new CustomException(errorMsg, HttpStatus.NOT_FOUND));
         UserResponse userFound = mapper.convertValue(user, UserResponse.class);
         return userFound;
+    }
+
+    public CoffeeUser coffeeUserById (Long id) {
+
+        String errorMsg = String.format("User with id %d not found", id);
+        CoffeeUser user = userRepo.findById(id).orElseThrow(() -> new CustomException(errorMsg, HttpStatus.NOT_FOUND));
+        return user;
     }
 
     @Override
@@ -146,6 +155,8 @@ public class UserServiceImpl implements UserService {
         Set<MeetingEvent> events = user.getEvents();
         return events;
     }
+
+
 
 
 }

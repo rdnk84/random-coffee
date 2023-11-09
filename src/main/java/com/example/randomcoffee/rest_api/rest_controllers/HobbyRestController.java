@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
 
-@Tag(name = "Random-coffee")
+@Tag(name = "Хобби")
 @RestController
 @RequestMapping("/api/hobby")
 @RequiredArgsConstructor
@@ -36,7 +36,7 @@ public class HobbyRestController {
         return hobbyService.getHobbyDto(id);
     }
 
-    @Operation(summary = "Удалить хобби")
+    @Operation(summary = "Удалить хобби по id")
     @DeleteMapping("/{id}")
     public void DeleteHobby(@PathVariable Long id) {
 
@@ -50,7 +50,7 @@ public class HobbyRestController {
         return hobbyService.updateHobby(id, request);
     }
 
-    @Operation(summary = "Все хобби")
+    @Operation(summary = "Список всех хобби")
     @GetMapping("/all-hobbies")
     public Page<HobbyResponse> getAllHobbies(@RequestParam(defaultValue = "1") Integer page,
                                             @RequestParam(defaultValue = "10") Integer perPage,
@@ -59,7 +59,7 @@ public class HobbyRestController {
         return hobbyService.getAllHobbies(page, perPage, sort, order);
     }
 
-    @Operation(summary = "Все хобби по указанному названию")
+    @Operation(summary = "Список всех хобби по указанному названию")
     @GetMapping("/by-title")
     public Page<HobbyResponse> getByTitle(@RequestParam(defaultValue = "1") Integer page,
                                              @RequestParam(defaultValue = "10") Integer perPage,

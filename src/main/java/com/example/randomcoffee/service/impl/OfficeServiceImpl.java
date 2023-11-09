@@ -7,12 +7,14 @@ import com.example.randomcoffee.model.db.entity.MeetingEvent;
 import com.example.randomcoffee.model.db.entity.Office;
 import com.example.randomcoffee.model.db.repository.CountryRepo;
 import com.example.randomcoffee.model.db.repository.OfficeRepo;
+import com.example.randomcoffee.model.db.repository.UserRepo;
 import com.example.randomcoffee.model.enums.EntityStatus;
 import com.example.randomcoffee.model.enums.EventStatus;
 import com.example.randomcoffee.model.enums.OfficeStatus;
 import com.example.randomcoffee.rest_api.dto.request.OfficeRequest;
 import com.example.randomcoffee.rest_api.dto.response.EventResponse;
 import com.example.randomcoffee.rest_api.dto.response.OfficeResponse;
+import com.example.randomcoffee.rest_api.dto.response.UserResponse;
 import com.example.randomcoffee.service.OfficeService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -32,15 +34,23 @@ import java.util.Set;
 public class OfficeServiceImpl implements OfficeService {
 
     private final OfficeRepo officeRepo;
+    private final UserRepo userRepo;
     private final ObjectMapper mapper;
-
     private final CountryRepo countryRepo;
+
 
     @Override
     public OfficeResponse getOfficeById(Long id) {
-        Office office = officeRepo.findById(id).orElse(new Office());
+        String errorMsg = String.format("Office with id %d not found", id);
+        Office office = officeRepo.findById(id).orElseThrow(() -> new CustomException(errorMsg, HttpStatus.NOT_FOUND));
         OfficeResponse result = mapper.convertValue(office, OfficeResponse.class);
         return result;
+    }
+
+    public Office getOffice(Long id) {
+        String errorMsg = String.format("Office with id %d not found", id);
+        Office office = officeRepo.findById(id).orElseThrow(() -> new CustomException(errorMsg, HttpStatus.NOT_FOUND));
+        return office;
     }
 
     @Override
@@ -99,4 +109,25 @@ public class OfficeServiceImpl implements OfficeService {
         }
         throw new CustomException("This office had already been deleted", HttpStatus.NOT_FOUND);
     }
+
+    public OfficeResponse userToOffice(Long userId, Long officeId) {
+        String userNotFound = String.format("User with id %d not found", userId);
+        CoffeeUser user = userRepo.findById(userId).orElseThrow(() -> new CustomException(userNotFound, HttpStatus.NOT_FOUND));
+        String officeNotFound = String.format("User with id %d not found", userId);
+        Office office = officeRepo.findById(officeId).orElseThrow(() -> new CustomException(officeNotFound, HttpStatus.NOT_FOUND));
+        if (office.getColleagues() == null) {
+            Set<CoffeeUser> colleagues = new HashSet<>();
+            colleagues.add(user);
+        } else {
+            office.getColleagues().add(user);
+        }
+        office.setUpdatedAt(LocalDateTime.now());
+        office.setStatus(OfficeStatus.UPDATED);
+        Office save = officeRepo.save(office);
+        user.setOffice(office);
+        user.setUpdatedAt(LocalDateTime.now());
+        userRepo.save(user);
+        return mapper.convertValue(save, OfficeResponse.class);
+    }
+
 }

@@ -134,6 +134,15 @@ public class EventServiceImpl implements EventService {
 //            Iterator<CoffeeUser> iterator = sortedSet.iterator();
 //            Iterable<CoffeeUser> iterable = (Iterable<CoffeeUser>) sortedSet;
 //            eventRepo.saveAllAndFlush(iterable);
+            eventRepo.saveAndFlush(event);
+            if(user.getEvents() == null) {
+                Set<MeetingEvent> events = new HashSet<>();
+                events.add(event);
+            } else {
+                user.getEvents().add(event);
+            }
+            userRepo.save(user);
+            user.setUpdatedAt(LocalDateTime.now());
             return;
         }
         throw new CustomException("This User is initiator of the Event", HttpStatus.NOT_FOUND);

@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Tag(name = "Random-coffee")
+@Tag(name = "Страны")
 @RestController
 @RequestMapping("/api/country")
 @RequiredArgsConstructor
@@ -37,7 +37,7 @@ public class CountryRestController {
         return countryService.changeCountry(id, request);
     }
 
-    @Operation(summary = "Найти все страны по региону")
+    @Operation(summary = "Список всех стран по региону")
     @GetMapping("/by-region")
     public List<CountryResponse> findByRegion(@RequestParam Region region) {
         return countryService.countriesByRegion(region);
@@ -49,7 +49,7 @@ public class CountryRestController {
         return countryService.countryByTitle(title);
     }
 
-    @Operation(summary = "Удалить страну")
+    @Operation(summary = "Удалить страну по id")
     @DeleteMapping("/{id}")
     public void deleteCountry(@PathVariable Long id){
         countryService.deleteCountry(id);

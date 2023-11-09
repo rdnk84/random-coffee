@@ -12,7 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
-@Tag(name = "Random-coffee")
+@Tag(name = "Проекты")
 @RestController
 @RequestMapping("/api/project")
 @RequiredArgsConstructor
@@ -33,7 +33,7 @@ public class ProjectRestController {
         return projectService.getProjectDto(id);
     }
 
-    @Operation(summary = "Удалить проект")
+    @Operation(summary = "Удалить проект по id")
     @DeleteMapping("/{id}")
     public void DeleteProject(@PathVariable Long id) {
 
@@ -47,8 +47,8 @@ public class ProjectRestController {
         return projectService.updateProject(id, request);
     }
 
-    @Operation(summary = "Все проекты")
-    @GetMapping("/all-hobbies")
+    @Operation(summary = "Список всех проектов")
+    @GetMapping("/all")
     public Page<ProjectResponse> getAllProjects(@RequestParam(defaultValue = "1") Integer page,
                                              @RequestParam(defaultValue = "10") Integer perPage,
                                              @RequestParam(defaultValue = "title") String sort,
@@ -56,7 +56,7 @@ public class ProjectRestController {
         return projectService.getAllProjects(page, perPage, sort, order);
     }
 
-    @Operation(summary = "Все проект по указанному названию")
+    @Operation(summary = "Список всех проектов по указанному названию")
     @GetMapping("/by-title")
     public Page<ProjectResponse> getProjectByTitle(@RequestParam(defaultValue = "1") Integer page,
                                           @RequestParam(defaultValue = "10") Integer perPage,

@@ -8,7 +8,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-@Tag(name = "Random-coffee")
+@Tag(name = "Офисы")
 @RestController
 @RequestMapping("/api/office")
 @RequiredArgsConstructor
@@ -29,17 +29,25 @@ public class OfficeRestController {
         return officeService.getOfficeById(id);
     }
 
-    @Operation(summary = "Удалить офис")
+    @Operation(summary = "Удалить офис по id")
     @DeleteMapping("/{id}")
     public void deleteOffice(@PathVariable Long id) {
 
          officeService.deleteOffice(id);
     }
 
-    @PostMapping("/{id}")
+    @PutMapping("/{id}")
     @Operation(summary = "Внести изменения в существующий офис")
     public OfficeResponse updateOffice(@PathVariable Long id, @RequestBody OfficeRequest request) {
 
         return officeService.updateOffice(id, request);
     }
+
+    @PutMapping("/{userId}/{officeId}")
+    @Operation(summary = "Внести в офис нового коллегу")
+    public OfficeResponse putColleague(@PathVariable Long userId, @PathVariable Long officeId) {
+
+        return officeService.userToOffice(userId, officeId);
+    }
+
 }

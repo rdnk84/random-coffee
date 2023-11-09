@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Set;
 
-@Tag(name = "Random-coffee")
+@Tag(name = "Мероприятия")
 @RestController
 @RequestMapping("/api/meeting-event")
 @RequiredArgsConstructor
@@ -22,7 +22,7 @@ public class EventRestController {
 
     private final EventServiceImpl service;
 
-    @Operation(summary = "Получить мероприятие по его идент.номеру")
+    @Operation(summary = "Получить мероприятие по его id")
     @GetMapping("/{id}")
     public EventResponse getEvent(@PathVariable Long id) {
         return service.getEvent(id);
@@ -34,7 +34,7 @@ public class EventRestController {
         return service.createEvent(initiatorId, request);
     }
 
-    @Operation(summary = "Удалить мероприятие")
+    @Operation(summary = "Удалить мероприятие по id")
     @DeleteMapping("/{id}")
     public void deleteEvent(@PathVariable Long id) {
         service.deleteEvent(id);
