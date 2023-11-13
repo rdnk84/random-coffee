@@ -9,6 +9,7 @@ import com.example.randomcoffee.model.enums.EventLocation;
 import com.example.randomcoffee.model.enums.EventStatus;
 import com.example.randomcoffee.rest_api.dto.request.EventRequest;
 import com.example.randomcoffee.rest_api.dto.response.EventResponse;
+import com.example.randomcoffee.rest_api.dto.response.UserResponse;
 import com.example.randomcoffee.service.EventService;
 import com.example.randomcoffee.utils.PaginationUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -22,6 +23,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.sql.Date;
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -37,21 +41,21 @@ public class EventServiceImpl implements EventService {
 
 
     @Override
-    public EventResponse getEvent(Long id) {
+    public EventResponse getEventDto(Long id) {
         String errorMsg = String.format("Event with id %d not found", id);
         MeetingEvent event = eventRepo.findById(id).orElseThrow(() -> new CustomException(errorMsg, HttpStatus.NOT_FOUND));
-        EventResponse result = mapper.convertValue(event, EventResponse.class);
-        return result;
-    }
+        Set<CoffeeUser> participants = event.getParticipants();
+        Long initiatorId = event.getInitiatorId();
+        CoffeeUser user = userRepo.findById(initiatorId).orElseThrow(() -> new CustomException(errorMsg, HttpStatus.NOT_FOUND));
 
-    @Override
-    public Page<EventResponse> eventsByDate(Integer page, Integer perPage, String sort, Sort.Direction order, LocalDateTime startDate, LocalDateTime endDate) {
-        Pageable pageRequest = PaginationUtil.getPageRequest(page, perPage, sort, order);
-        Page<MeetingEvent> events = eventRepo.findByDateBetween(pageRequest, startDate, endDate);
-        List<EventResponse> eventsByDate = events.getContent().stream()
-                .map(e -> mapper.convertValue(e, EventResponse.class))
-                .collect(Collectors.toList());
-        return new PageImpl<>(eventsByDate);
+        EventResponse result = mapper.convertValue(event, EventResponse.class);
+        Set<UserResponse> participantList = participants.stream()
+                .map(p -> mapper.convertValue(p, UserResponse.class))
+                .collect(Collectors.toSet());
+        ;
+        result.setParticipants(participantList);
+        result.setInitiatorLastName(user.getLastName());
+        return result;
     }
 
     @Override
@@ -62,6 +66,7 @@ public class EventServiceImpl implements EventService {
             event.setTitle(StringUtils.isBlank(request.getTitle()) ? event.getTitle() : request.getTitle());
             event.setEventTheme(request.getEventTheme() == null ? event.getEventTheme() : request.getEventTheme());
             event.setMeetingDate(request.getMeetingDate() == null ? event.getMeetingDate() : request.getMeetingDate());
+            event.setMeetingTime(request.getMeetingTime() == null ? event.getMeetingTime() : request.getMeetingTime());
             event.setLocation(request.getLocation() == null ? event.getLocation() : request.getLocation());
             event.setUpdatedAt(LocalDateTime.now());
 
@@ -88,9 +93,16 @@ public class EventServiceImpl implements EventService {
         participants.add(initiator);
         Set<MeetingEvent> events = initiator.getEvents();
         events.add(event);
+        initiator.setEvents(events);
+        event.setParticipants(participants);
+        userRepo.save(initiator);
         MeetingEvent save = eventRepo.save(event);
         EventResponse response = mapper.convertValue(save, EventResponse.class);
-        response.setInitiatorFirstName(initiator.getFirstName());
+        response.setInitiatorLastName(initiator.getFirstName());
+        Set<UserResponse> participantsList = participants.stream()
+                .map(p -> mapper.convertValue(p, UserResponse.class))
+                .collect(Collectors.toSet());
+        response.setParticipants(participantsList);
         return response;
     }
 
@@ -98,7 +110,6 @@ public class EventServiceImpl implements EventService {
     public void deleteEvent(Long id) {
         String errorMsg = String.format("Event with id %d not found", id);
         MeetingEvent event = eventRepo.findById(id).orElseThrow(() -> new CustomException(errorMsg, HttpStatus.NOT_FOUND));
-
         if (!event.getStatus().equals(EventStatus.CANCELLED)) {
             event.setStatus(EventStatus.CANCELLED);
             event.setUpdatedAt(LocalDateTime.now());
@@ -109,51 +120,108 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public Boolean ifEventAlreadyExist(LocalDateTime startDate, EventLocation location) {
-        MeetingEvent byDateAndTime = eventRepo.findByDateAndLocation(startDate, location).orElseThrow(() -> new CustomException("not found", HttpStatus.NOT_FOUND));
-        Long eventId = byDateAndTime.getId();
-        String errorMsg = String.format("Event with id %d not found", eventId);
-        MeetingEvent event = eventRepo.findById(eventId).orElseThrow(() -> new CustomException(errorMsg, HttpStatus.NOT_FOUND));
-        if (byDateAndTime != null && !event.getStatus().equals(EventStatus.CANCELLED)) {
-            return true;
-        }
-        return false;
+    public EventResponse ifEventAlreadyExist(String day, String time, EventLocation location) {
+        Time sqlTime = Time.valueOf(time);
+        Date sqlDay = Date.valueOf(day);
+        MeetingEvent byDateAndTime = eventRepo.findByDateAndLocation(sqlDay, sqlTime, location).orElseThrow(() -> new CustomException("not found", HttpStatus.NOT_FOUND));
+        EventResponse result = mapper.convertValue(byDateAndTime, EventResponse.class);
+        return result;
     }
 
-    public void sendEvent(Long userid, Long eventId) {
-        String userNotFound = String.format("User with id %d not found", userid);
-        CoffeeUser user = userRepo.findById(userid).orElseThrow(() -> new CustomException(userNotFound, HttpStatus.NOT_FOUND));
+
+    public void sendEvent(Long eventId, Long userid) {
         String eventNotFound = String.format("Event with id %d not found", eventId);
         MeetingEvent event = eventRepo.findById(eventId).orElseThrow(() -> new CustomException(eventNotFound, HttpStatus.NOT_FOUND));
+        String userNotFound = String.format("User with id %d not found", userid);
+        CoffeeUser user = userRepo.findById(userid).orElseThrow(() -> new CustomException(userNotFound, HttpStatus.NOT_FOUND));
         if (event.getInitiatorId() != userid) {
             Set<CoffeeUser> participants = event.getParticipants();
             participants.add(user);
-            event.setUpdatedAt(LocalDateTime.now());
             event.setParticipants(participants);
-//            SortedSet<CoffeeUser> sortedSet = new TreeSet<>();
-//            Iterator<CoffeeUser> iterator = sortedSet.iterator();
-//            Iterable<CoffeeUser> iterable = (Iterable<CoffeeUser>) sortedSet;
-//            eventRepo.saveAllAndFlush(iterable);
-            eventRepo.saveAndFlush(event);
-            if(user.getEvents() == null) {
-                Set<MeetingEvent> events = new HashSet<>();
-                events.add(event);
-            } else {
-                user.getEvents().add(event);
-            }
-            userRepo.save(user);
+            event.setUpdatedAt(LocalDateTime.now());
+
+            Set<MeetingEvent> userEvents = user.getEvents();
+            userEvents.add(event);
+            user.setEvents(userEvents);
             user.setUpdatedAt(LocalDateTime.now());
+            eventRepo.save(event);
+            userRepo.save(user);
             return;
         }
         throw new CustomException("This User is initiator of the Event", HttpStatus.NOT_FOUND);
     }
 
-    public Set<CoffeeUser> checkAllParticipants(Long eventId) {
+    @Override
+    public Set<CoffeeUser> checkAllEventParticipants(Long eventId) {
         String eventNotFound = String.format("Event with id %d not found", eventId);
         MeetingEvent event = eventRepo.findById(eventId).orElseThrow(() -> new CustomException(eventNotFound, HttpStatus.NOT_FOUND));
         Set<CoffeeUser> participants = event.getParticipants();
-        Integer size = participants.size();
         return participants;
+    }
+
+    @Override
+    public void userDeclineEvent(Long eventId, Long userId) {
+        String userNotFound = String.format("User with id %d not found", userId);
+        CoffeeUser user = userRepo.findById(userId).orElseThrow(() -> new CustomException(userNotFound, HttpStatus.NOT_FOUND));
+        String eventNotFound = String.format("Event with id %d not found", eventId);
+        MeetingEvent event = eventRepo.findById(eventId).orElseThrow(() -> new CustomException(eventNotFound, HttpStatus.NOT_FOUND));
+        Long initiatorId = event.getInitiatorId();
+        Set<CoffeeUser> participants = event.getParticipants();
+        Set<MeetingEvent> userEvents = user.getEvents();
+        if (initiatorId != userId) {
+            for (MeetingEvent theEvent : userEvents) {
+                Long searchEventId = theEvent.getId();
+                if (searchEventId == eventId) {
+                    userEvents.remove(event);
+                    participants.remove(user);
+                    event.setParticipants(participants);
+                    user.setEvents(userEvents);
+                    event.setUpdatedAt(LocalDateTime.now());
+                    user.setUpdatedAt(LocalDateTime.now());
+                    eventRepo.save(event);
+                    userRepo.save(user);
+                    return;
+                }
+            }
+            throw new CustomException("The user has not have such event", HttpStatus.NOT_FOUND);
+        }
+        throw new CustomException("This user is initiator of the event, please use method deleteEvent(eventId)", HttpStatus.NOT_FOUND);
+    }
+
+    @Override
+    public Page<EventResponse> getEventsInPeriod(Integer page, Integer perPage, String sort, Sort.Direction order, String fromDay, String toDay) {
+        Date sqlFromDay = Date.valueOf(fromDay);
+        Date sqlToDay = Date.valueOf(toDay);
+        Pageable pageRequest = PaginationUtil.getPageRequest(page, perPage, sort, order);
+        Page<MeetingEvent> events = eventRepo.findByDaysBetween(pageRequest, sqlFromDay, sqlToDay);
+        List<EventResponse> eventsByDate = events.getContent().stream()
+                .map(e -> mapper.convertValue(e, EventResponse.class))
+                .collect(Collectors.toList());
+        return new PageImpl<>(eventsByDate);
+    }
+
+    @Override
+    public Page<EventResponse> getEventsInDayTimePeriod(Integer page, Integer perPage, String sort, Sort.Direction order, String day, String fromTime, String toTime) {
+        Time sqlFromTime = Time.valueOf(fromTime);
+        Time sqlToTime = Time.valueOf(toTime);
+        Date sqlDay = Date.valueOf(day);
+        Pageable pageRequest = PaginationUtil.getPageRequest(page, perPage, sort, order);
+        Page<MeetingEvent> events = eventRepo.findEventsByTimePeriod(pageRequest, sqlDay, sqlFromTime, sqlToTime);
+        List<EventResponse> eventsByDate = events.getContent().stream()
+                .map(e -> mapper.convertValue(e, EventResponse.class))
+                .collect(Collectors.toList());
+        return new PageImpl<>(eventsByDate);
+    }
+
+    @Override
+    public Page<EventResponse> allEventsByDay(Integer page, Integer perPage, String sort, Sort.Direction order, String day) {
+        java.sql.Date sqlDay = java.sql.Date.valueOf(day);
+        Pageable pageRequest = PaginationUtil.getPageRequest(page, perPage, sort, order);
+        Page<MeetingEvent> events = eventRepo.eventsByDay(pageRequest, sqlDay);
+        List<EventResponse> eventsByDate = events.getContent().stream()
+                .map(e -> mapper.convertValue(e, EventResponse.class))
+                .collect(Collectors.toList());
+        return new PageImpl<>(eventsByDate);
     }
 
 }

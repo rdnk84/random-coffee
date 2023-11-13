@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -31,5 +32,8 @@ public interface UserRepo extends JpaRepository<CoffeeUser, Long> {
 
 //    @Query(nativeQuery = true, value = "select * from users u where u.")
 //   Set<CoffeeUser> findAllByEventId();
+
+    @Query(nativeQuery = true, value =  "SELECT * FROM users u WHERE u.hiring_date >= :fromDate AND u.hiring_date <= :toDate")
+    Page<CoffeeUser> findByHiringDate(Pageable request, @Param("fromDate") Date fromDate, @Param("toDate") Date toDate);
 
 }

@@ -6,6 +6,7 @@ import com.example.randomcoffee.rest_api.dto.response.UserResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 
+import java.sql.Date;
 import java.util.List;
 
 public interface UserService {
@@ -20,7 +21,9 @@ public interface UserService {
 
     void deleteUser(Long id);
 
-    String declineEvent(Long eventId, Long userId);
-    String acceptEvent(Long eventId, Long userId);
     Page<UserResponse> allUsers(Integer page, Integer perPage, String sort, Sort.Direction order);
+
+    UserResponse userChangeOffice(Long userId, Long newOfficeId);
+
+    Page<UserResponse> findByHiringPeriod(Integer page, Integer perPage, String sort, Sort.Direction order, String fromDate, String toDate);
 }

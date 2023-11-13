@@ -13,7 +13,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.springframework.format.annotation.DateTimeFormat;
 
+import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -37,8 +39,25 @@ public class MeetingEvent {
     @Enumerated(EnumType.STRING)
     EventTheme eventTheme;
 
+//    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+//    @JsonSerialize(using = LocalDateTimeSerializer.class)
+//    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+////    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+//    LocalDateTime meetingDateTime;
+
+//    @Basic
+//    @Temporal(TemporalType.DATE)
+//    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+//    @JsonFormat(pattern = "yyyy-MM-dd")
+//    Date meetingDate;
+
     @JsonFormat(pattern = "yyyy-MM-dd")
     LocalDate meetingDate;
+
+    @Basic
+    @Temporal(TemporalType.TIME)
+//   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    Time meetingTime;
 
     @Enumerated(EnumType.STRING)
     EventLocation location;
@@ -46,18 +65,15 @@ public class MeetingEvent {
     @Enumerated(EnumType.STRING)
     EventStatus status;
 
-
     @Column(name = "initiator_id")
     Long initiatorId;
-
-//    @Enumerated(EnumType.STRING)
-//    EventAcceptane acceptance;
 
     @Column(name = "created_at")
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     LocalDateTime createdAt;
 
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     @Column(name = "updated_at")
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
@@ -66,19 +82,6 @@ public class MeetingEvent {
 
     @ManyToMany(mappedBy = "events")
     @JsonIgnore
-//    @JoinTable(
-//            name = "events_users"
-//            , joinColumns = @JoinColumn(name = "event_id")
-//            , inverseJoinColumns = @JoinColumn(name = "user_id")
-//    )
     Set<CoffeeUser> participants = new HashSet<>();
-//
-//    @OneToMany
-//    @JsonManagedReference(value = "event_users")
-//    List<CoffeeUser> participants;
 
-
-//    @ManyToOne
-//    @JsonBackReference(value = "events_user")
-//    CoffeeUser initiator;
 }

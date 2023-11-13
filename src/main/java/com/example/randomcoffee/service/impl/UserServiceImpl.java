@@ -5,9 +5,13 @@ import com.example.randomcoffee.model.db.entity.CoffeeUser;
 import com.example.randomcoffee.model.db.entity.MeetingEvent;
 import com.example.randomcoffee.model.db.entity.Office;
 import com.example.randomcoffee.model.db.repository.EventRepo;
+import com.example.randomcoffee.model.db.repository.OfficeRepo;
 import com.example.randomcoffee.model.db.repository.UserRepo;
+import com.example.randomcoffee.model.enums.OfficeStatus;
 import com.example.randomcoffee.model.enums.UserActivityStatus;
+import com.example.randomcoffee.rest_api.dto.request.OfficeRequest;
 import com.example.randomcoffee.rest_api.dto.request.UserRequest;
+import com.example.randomcoffee.rest_api.dto.response.OfficeResponse;
 import com.example.randomcoffee.rest_api.dto.response.UserResponse;
 import com.example.randomcoffee.service.UserService;
 import com.example.randomcoffee.utils.PaginationUtil;
@@ -23,10 +27,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.sql.Date;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -37,7 +40,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepo userRepo;
     private final EventRepo eventRepo;
     private final ObjectMapper mapper;
-    private final OfficeServiceImpl officeService;
+    private final OfficeRepo officeRepo;
 
 
     @Override
@@ -45,11 +48,12 @@ public class UserServiceImpl implements UserService {
 
         String errorMsg = String.format("User with id %d not found", id);
         CoffeeUser user = userRepo.findById(id).orElseThrow(() -> new CustomException(errorMsg, HttpStatus.NOT_FOUND));
+
         UserResponse userFound = mapper.convertValue(user, UserResponse.class);
         return userFound;
     }
 
-    public CoffeeUser coffeeUserById (Long id) {
+    public CoffeeUser coffeeUserById(Long id) {
 
         String errorMsg = String.format("User with id %d not found", id);
         CoffeeUser user = userRepo.findById(id).orElseThrow(() -> new CustomException(errorMsg, HttpStatus.NOT_FOUND));
@@ -80,7 +84,7 @@ public class UserServiceImpl implements UserService {
         user.setEmail(StringUtils.isBlank(request.getEmail()) ? user.getEmail() : request.getEmail());
         user.setPassword(StringUtils.isBlank(request.getPassword()) ? user.getPassword() : request.getPassword());
         user.setMiddleName(StringUtils.isBlank(request.getMiddleName()) ? user.getMiddleName() : request.getMiddleName());
-        user.setFirstName(StringUtils.isBlank(request.getFirstName()) ? user.getFirstName() : request.getFirstName());
+        user.setAstroSign(request.getAstroSign() == null ? user.getAstroSign() : request.getAstroSign());
         user.setDepartment(request.getDepartment() == null ? user.getDepartment() : request.getDepartment());
 
         user.setUpdatedAt(LocalDateTime.now());
@@ -105,10 +109,12 @@ public class UserServiceImpl implements UserService {
         CoffeeUser coffeeUser = mapper.convertValue(request, CoffeeUser.class);
         coffeeUser.setCreatedAt(LocalDateTime.now());
         coffeeUser.setStatus(UserActivityStatus.CREATED);
+
         CoffeeUser save = userRepo.save(coffeeUser);
         UserResponse createdUser = mapper.convertValue(save, UserResponse.class);
         return createdUser;
     }
+
 
     @Override
     public void deleteUser(Long id) {
@@ -121,25 +127,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String declineEvent(Long eventId, Long userId) {
-        String userNotFound = String.format("User with id %d not found", userId);
-        CoffeeUser user = userRepo.findById(userId).orElseThrow(() -> new CustomException(userNotFound, HttpStatus.NOT_FOUND));
-        String eventNotFound = String.format("Event with id %d not found", eventId);
-        MeetingEvent event = eventRepo.findById(eventId).orElseThrow(() -> new CustomException(eventNotFound, HttpStatus.NOT_FOUND));
-        Set<CoffeeUser> participants = event.getParticipants();
-        participants.remove(user);
-        eventRepo.save(event);
-        return "This colleague" + user.getFirstName() + " " + user.getLastName() + " has declined the meeting";
-    }
-
-    @Override
-    public String acceptEvent(Long eventId, Long userId) {
-        String userNotFound = String.format("User with id %d not found", userId);
-        CoffeeUser user = userRepo.findById(userId).orElseThrow(() -> new CustomException(userNotFound, HttpStatus.NOT_FOUND));
-        return "This colleague " + user.getFirstName() + " " + user.getLastName() + " has accepted the meeting";
-    }
-
-    @Override
     public Page<UserResponse> allUsers(Integer page, Integer perPage, String sort, Sort.Direction order) {
         Pageable pageRequest = PaginationUtil.getPageRequest(page, perPage, sort, order);
         Page<CoffeeUser> usersPage = userRepo.findAll(pageRequest);
@@ -149,14 +136,49 @@ public class UserServiceImpl implements UserService {
         return new PageImpl<>(usersList);
     }
 
-    public Set<MeetingEvent> checkAllEvents(Long userId) {
+    public Set<MeetingEvent> checkAllUserEvents(Long userId) {
         String errorMsg = String.format("User with id %d not found", userId);
         CoffeeUser user = userRepo.findById(userId).orElseThrow(() -> new CustomException(errorMsg, HttpStatus.NOT_FOUND));
         Set<MeetingEvent> events = user.getEvents();
         return events;
     }
 
+    @Override
+    public UserResponse userChangeOffice(Long userId, Long newOfficeId) {
+        String errorMsg = String.format("User with id %d not found", userId);
+        CoffeeUser user = userRepo.findById(userId).orElseThrow(() -> new CustomException(errorMsg, HttpStatus.NOT_FOUND));
+        Office oldOffice = user.getOffice();
+        String newOfficeNotFound = String.format("Office with id %d not found", newOfficeId);
+        Office newOffice = officeRepo.findById(newOfficeId).orElseThrow(() -> new CustomException(newOfficeNotFound, HttpStatus.NOT_FOUND));
+        user.setOffice(newOffice);
+        user.setUpdatedAt(LocalDateTime.now());
+        oldOffice.getColleagues().remove(user);
+        newOffice.getColleagues().add(user);
+        newOffice.setStatus(OfficeStatus.UPDATED);
+        newOffice.setUpdatedAt(LocalDateTime.now());
+        oldOffice.setStatus(OfficeStatus.UPDATED);
+        oldOffice.setUpdatedAt(LocalDateTime.now());
+        officeRepo.save(oldOffice);
+        officeRepo.save(newOffice);
 
+        CoffeeUser save = userRepo.save(user);
 
+        UserResponse result = mapper.convertValue(save, UserResponse.class);
+        OfficeResponse officeResponse = mapper.convertValue(newOffice, OfficeResponse.class);
+        result.setOffice(officeResponse);
+        return result;
+    }
+
+    @Override
+    public Page<UserResponse> findByHiringPeriod(Integer page, Integer perPage, String sort, Sort.Direction order, String fromDate, String toDate) {
+        Date sqlFromDate = Date.valueOf(fromDate);
+        Date sqlToDate = Date.valueOf(toDate);
+        Pageable pageRequest = PaginationUtil.getPageRequest(page, perPage, sort, order);
+        Page<CoffeeUser> usersPage = userRepo.findByHiringDate(pageRequest, sqlFromDate, sqlToDate);
+        List<UserResponse> usersList = usersPage.getContent().stream()
+                .map(u -> mapper.convertValue(u, UserResponse.class))
+                .collect(Collectors.toList());
+        return new PageImpl<>(usersList);
+    }
 
 }

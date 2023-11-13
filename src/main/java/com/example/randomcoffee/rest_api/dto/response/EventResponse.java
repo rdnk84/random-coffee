@@ -6,6 +6,9 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -18,6 +21,6 @@ public class EventResponse extends EventRequest {
 
     Long id;
     EventStatus status;
-    String initiatorFirstName;
-    Long initiatorId;
+    String initiatorLastName;
+    Set<UserResponse> participants = new HashSet<>();
 }

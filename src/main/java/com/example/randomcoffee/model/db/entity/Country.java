@@ -16,6 +16,7 @@ import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -53,6 +54,6 @@ public class Country {
 
     @OneToMany
     @JsonManagedReference(value = "offices_country")
-    List<Office> offices;
+    List<Office> offices = new ArrayList<>();
 
 }

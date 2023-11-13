@@ -2,6 +2,7 @@ package com.example.randomcoffee.rest_api.rest_controllers;
 
 import com.example.randomcoffee.rest_api.dto.request.OfficeRequest;
 import com.example.randomcoffee.rest_api.dto.response.OfficeResponse;
+import com.example.randomcoffee.rest_api.dto.response.UserResponse;
 import com.example.randomcoffee.service.impl.OfficeServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -43,11 +44,11 @@ public class OfficeRestController {
         return officeService.updateOffice(id, request);
     }
 
-    @PutMapping("/{userId}/{officeId}")
-    @Operation(summary = "Внести в офис нового коллегу")
-    public OfficeResponse putColleague(@PathVariable Long userId, @PathVariable Long officeId) {
+    @PutMapping("/{officeId}/{userId}")
+    @Operation(summary = "Добавить в офис нового сотрудника")
+    public OfficeResponse userToOffice(@PathVariable Long officeId, @PathVariable Long userId) {
 
-        return officeService.userToOffice(userId, officeId);
+        return officeService.userToOffice(officeId, userId);
     }
 
 }

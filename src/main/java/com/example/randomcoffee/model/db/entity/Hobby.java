@@ -15,6 +15,7 @@ import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -54,5 +55,5 @@ public class Hobby {
 
     @ManyToMany(mappedBy = "hobbies")
     @JsonIgnore
-    Set<CoffeeUser> colleagues;
+    Set<CoffeeUser> colleagues = new HashSet<>();
 }

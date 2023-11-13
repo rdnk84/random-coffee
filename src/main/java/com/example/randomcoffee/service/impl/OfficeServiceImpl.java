@@ -12,6 +12,7 @@ import com.example.randomcoffee.model.enums.EntityStatus;
 import com.example.randomcoffee.model.enums.EventStatus;
 import com.example.randomcoffee.model.enums.OfficeStatus;
 import com.example.randomcoffee.rest_api.dto.request.OfficeRequest;
+import com.example.randomcoffee.rest_api.dto.response.CountryResponse;
 import com.example.randomcoffee.rest_api.dto.response.EventResponse;
 import com.example.randomcoffee.rest_api.dto.response.OfficeResponse;
 import com.example.randomcoffee.rest_api.dto.response.UserResponse;
@@ -25,7 +26,9 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Slf4j
@@ -59,16 +62,17 @@ public class OfficeServiceImpl implements OfficeService {
         String errorMsg = String.format("Office  with country  %s not found", title);
         Country country = countryRepo.findByTitle(title).orElseThrow(
                 () -> new CustomException(errorMsg, HttpStatus.NOT_FOUND));
-
         Office office = mapper.convertValue(request, Office.class);
         office.setCountry(country);
         office.setCreatedAt(LocalDateTime.now());
         office.setStatus(OfficeStatus.CREATED);
-        Set<CoffeeUser> colleagues = new HashSet<>();
         Office save = officeRepo.save(office);
+        country.getOffices().add(office);
+        countryRepo.save(country);
+        CountryResponse countryResponse = mapper.convertValue(country, CountryResponse.class);
         OfficeResponse result = mapper.convertValue(save, OfficeResponse.class);
         result.setCountryName(country.getTitle());
-        result.setCountryId(request.getCountryId());
+        result.setOfficeCountry(countryResponse);
         return result;
     }
 
@@ -83,7 +87,6 @@ public class OfficeServiceImpl implements OfficeService {
             return;
         }
         throw new CustomException("This office had already been deleted", HttpStatus.NOT_FOUND);
-
     }
 
     @Override
@@ -105,29 +108,34 @@ public class OfficeServiceImpl implements OfficeService {
             office.setStatus(OfficeStatus.UPDATED);
             office.setUpdatedAt(LocalDateTime.now());
             Office save = officeRepo.save(office);
-            return mapper.convertValue(save, OfficeResponse.class);
+            OfficeResponse result = mapper.convertValue(save, OfficeResponse.class);
+            result.setCountryName(office.getCountry().getTitle());
+            return result;
         }
         throw new CustomException("This office had already been deleted", HttpStatus.NOT_FOUND);
     }
 
-    public OfficeResponse userToOffice(Long userId, Long officeId) {
+
+    public OfficeResponse userToOffice(Long officeId, Long userId) {
         String userNotFound = String.format("User with id %d not found", userId);
         CoffeeUser user = userRepo.findById(userId).orElseThrow(() -> new CustomException(userNotFound, HttpStatus.NOT_FOUND));
-        String officeNotFound = String.format("User with id %d not found", userId);
-        Office office = officeRepo.findById(officeId).orElseThrow(() -> new CustomException(officeNotFound, HttpStatus.NOT_FOUND));
-        if (office.getColleagues() == null) {
-            Set<CoffeeUser> colleagues = new HashSet<>();
-            colleagues.add(user);
-        } else {
+        if (user.getOffice() == null) {
+            String officeNotFound = String.format("Office with id %d not found", userId);
+            Office office = officeRepo.findById(officeId).orElseThrow(() -> new CustomException(officeNotFound, HttpStatus.NOT_FOUND));
             office.getColleagues().add(user);
+            office.setUpdatedAt(LocalDateTime.now());
+            office.setStatus(OfficeStatus.UPDATED);
+            user.setOffice(office);
+            user.setUpdatedAt(LocalDateTime.now());
+            userRepo.save(user);
+            Office save = officeRepo.save(office);
+
+            OfficeResponse result = mapper.convertValue(save, OfficeResponse.class);
+            result.setCountryName(office.getCountry().getTitle());
+            result.setColleaguesNumber(office.getColleagues().size());
+            return result;
         }
-        office.setUpdatedAt(LocalDateTime.now());
-        office.setStatus(OfficeStatus.UPDATED);
-        Office save = officeRepo.save(office);
-        user.setOffice(office);
-        user.setUpdatedAt(LocalDateTime.now());
-        userRepo.save(user);
-        return mapper.convertValue(save, OfficeResponse.class);
+        throw new CustomException("This user is attached to another office; please call changeOffice() method", HttpStatus.BAD_REQUEST);
     }
 
 }

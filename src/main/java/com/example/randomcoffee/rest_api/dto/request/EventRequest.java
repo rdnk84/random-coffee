@@ -7,13 +7,12 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
+import org.springframework.format.annotation.DateTimeFormat;
 
+import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Getter
 @Setter
@@ -25,7 +24,14 @@ import java.util.Set;
 public class EventRequest {
     String title;
     EventTheme eventTheme;
+
+//    @DateTimeFormat(iso= DateTimeFormat.ISO.DATE_TIME, pattern = "yyyy-MM-dd HH:mm:ss")
+//    LocalDateTime meetingDateTime;
+
+    //    Date meetingDate;
+
     LocalDate meetingDate;
+    Time meetingTime;
     EventLocation location;
-    Set<Object> participants = new HashSet<>();
+//    Set<Object> participants = new HashSet<>();
 }

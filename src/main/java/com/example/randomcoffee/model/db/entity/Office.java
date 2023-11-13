@@ -2,6 +2,8 @@ package com.example.randomcoffee.model.db.entity;
 
 import com.example.randomcoffee.model.enums.OfficeStatus;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -23,6 +25,8 @@ import java.util.Set;
 @Entity
 @Table(name = "office")
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Office {
 
     @Id
@@ -47,7 +51,7 @@ public class Office {
 
     @OneToMany
     @JsonManagedReference(value = "office_users")
-    Set<CoffeeUser> colleagues;
+    Set<CoffeeUser> colleagues = new HashSet<>();
 
     @ManyToOne
     @JsonBackReference(value = "offices_country")

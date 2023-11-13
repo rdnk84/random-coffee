@@ -6,6 +6,9 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Getter
 @Setter
 @SuperBuilder
@@ -16,5 +19,5 @@ public class UserResponse extends UserRequest {
 
     Long id;
     OfficeResponse office;
-
+    Set<EventResponse> events = new HashSet<>();
 }

@@ -6,4 +6,5 @@ public enum Region {
     LATAM,
     APAC,
     NA
+
 }
