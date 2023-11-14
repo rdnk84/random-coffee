@@ -43,18 +43,18 @@ public class OfficeServiceImpl implements OfficeService {
 
 
     @Override
-    public OfficeResponse getOfficeById(Long id) {
+    public OfficeResponse getOfficeDto(Long id) {
         String errorMsg = String.format("Office with id %d not found", id);
         Office office = officeRepo.findById(id).orElseThrow(() -> new CustomException(errorMsg, HttpStatus.NOT_FOUND));
         OfficeResponse result = mapper.convertValue(office, OfficeResponse.class);
         return result;
     }
 
-    public Office getOffice(Long id) {
-        String errorMsg = String.format("Office with id %d not found", id);
-        Office office = officeRepo.findById(id).orElseThrow(() -> new CustomException(errorMsg, HttpStatus.NOT_FOUND));
-        return office;
-    }
+//    public Office getOffice(Long id) {
+//        String errorMsg = String.format("Office with id %d not found", id);
+//        Office office = officeRepo.findById(id).orElseThrow(() -> new CustomException(errorMsg, HttpStatus.NOT_FOUND));
+//        return office;
+//    }
 
     @Override
     public OfficeResponse createOffice(OfficeRequest request) {

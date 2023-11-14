@@ -64,6 +64,7 @@ public class UserServiceImpl implements UserService {
     public Page<UserResponse> usersByLastName(Integer page, Integer perPage, String sort, Sort.Direction order, String lastName) {
         Pageable pageRequest = PaginationUtil.getPageRequest(page, perPage, sort, order);
         Page<CoffeeUser> usersPage = userRepo.findByLastNameNotDeleted(pageRequest, lastName);
+//        Page<CoffeeUser> usersPage = userRepo.findByLastName(pageRequest, lastName);
         List<UserResponse> usersList = usersPage.getContent().stream()
                 .map(u -> mapper.convertValue(u, UserResponse.class))
                 .collect(Collectors.toList());
@@ -74,14 +75,22 @@ public class UserServiceImpl implements UserService {
     public UserResponse updateUser(Long id, UserRequest request) {
         String errorMsg = String.format("User with id %d not found", id);
         CoffeeUser user = userRepo.findById(id).orElseThrow(() -> new CustomException(errorMsg, HttpStatus.NOT_FOUND));
-
-        if (!EmailValidator.getInstance().isValid(request.getEmail())) {
+        String email = request.getEmail();
+        if (StringUtils.isBlank(email)) {
+            email = user.getEmail();
+        } else if (!EmailValidator.getInstance().isValid(email)) {
             throw new CustomException("invalid email", HttpStatus.BAD_REQUEST);
+        } else {
+            email = request.getEmail();
         }
+        user.setEmail(email);
+//        if (!EmailValidator.getInstance().isValid(request.getEmail())) {
+//            throw new CustomException("invalid email", HttpStatus.BAD_REQUEST);
+//        }
 
         user.setFirstName(StringUtils.isBlank(request.getFirstName()) ? user.getFirstName() : request.getFirstName());
         user.setLastName(StringUtils.isBlank(request.getLastName()) ? user.getLastName() : request.getLastName());
-        user.setEmail(StringUtils.isBlank(request.getEmail()) ? user.getEmail() : request.getEmail());
+
         user.setPassword(StringUtils.isBlank(request.getPassword()) ? user.getPassword() : request.getPassword());
         user.setMiddleName(StringUtils.isBlank(request.getMiddleName()) ? user.getMiddleName() : request.getMiddleName());
         user.setAstroSign(request.getAstroSign() == null ? user.getAstroSign() : request.getAstroSign());
@@ -130,6 +139,7 @@ public class UserServiceImpl implements UserService {
     public Page<UserResponse> allUsers(Integer page, Integer perPage, String sort, Sort.Direction order) {
         Pageable pageRequest = PaginationUtil.getPageRequest(page, perPage, sort, order);
         Page<CoffeeUser> usersPage = userRepo.findAll(pageRequest);
+
         List<UserResponse> usersList = usersPage.getContent().stream()
                 .map(u -> mapper.convertValue(u, UserResponse.class))
                 .collect(Collectors.toList());

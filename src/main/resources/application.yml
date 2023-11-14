@@ -7,18 +7,18 @@ spring:
     password: 357
     driver-class-name: org.postgresql.Driver
 
-#  security:
-#    user:
-#      name: admin
-#      password: admin
+  #  security:
+  #    user:
+  #      name: admin
+  #      password: admin
 
   jpa:
     database: postgresql
     show-sql: true
     generate-ddl: true
     hibernate:
-      ddl-auto: create-drop
-#        ddl-auto: update
+      #      ddl-auto: create-drop
+      ddl-auto: update
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect

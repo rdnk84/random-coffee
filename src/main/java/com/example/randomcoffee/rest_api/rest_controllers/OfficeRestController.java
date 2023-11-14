@@ -27,7 +27,7 @@ public class OfficeRestController {
     @Operation(summary = "Найти офис по id")
     @GetMapping("/{id}")
     public OfficeResponse getOffice(@PathVariable Long id) {
-        return officeService.getOfficeById(id);
+        return officeService.getOfficeDto(id);
     }
 
     @Operation(summary = "Удалить офис по id")

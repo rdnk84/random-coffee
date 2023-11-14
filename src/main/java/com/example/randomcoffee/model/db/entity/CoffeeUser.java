@@ -52,7 +52,7 @@ public class CoffeeUser {
     String lastName;
 
     @Column(name = "middle_name")
-    String MiddleName;
+    String middleName;
 
     @JsonFormat(pattern = "yyyy-MM-dd")
     LocalDate hiringDate;

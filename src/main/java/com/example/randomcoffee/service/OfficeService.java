@@ -6,7 +6,7 @@ import com.example.randomcoffee.rest_api.dto.response.UserResponse;
 
 public interface OfficeService {
 
-    OfficeResponse getOfficeById(Long id);
+    OfficeResponse getOfficeDto(Long id);
     OfficeResponse createOffice(OfficeRequest request);
     void deleteOffice(Long id);
     OfficeResponse updateOffice(Long id, OfficeRequest request);

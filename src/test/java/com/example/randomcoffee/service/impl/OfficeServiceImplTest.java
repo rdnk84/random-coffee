@@ -54,7 +54,7 @@ class OfficeServiceImplTest {
         Office office = new Office();
         office.setId(1L);
         when(officeRepo.findById(office.getId())).thenReturn(Optional.of(office));
-        OfficeResponse result = officeService.getOfficeById(office.getId());
+        OfficeResponse result = officeService.getOfficeDto(office.getId());
         assertEquals(Optional.of(result.getId()), Optional.of(office.getId()));
     }
 
@@ -139,6 +139,7 @@ class OfficeServiceImplTest {
     void updateOffice() {
         OfficeRequest request = new OfficeRequest();
         request.setCity("SPb");
+//        request.setCountryName("");
 
         Office office = new Office();
         office.setCity("Moscow");
@@ -149,15 +150,40 @@ class OfficeServiceImplTest {
         country.setId(1L);
         country.setTitle("RF");
 
-        office.setCountry(country);
+       office.setCountry(country);
 
         when(officeRepo.findById(office.getId())).thenReturn(Optional.of(office));
-//        when(countryRepo.findByTitle(country.getTitle())).thenReturn(Optional.of(country));
+        when(countryRepo.findByTitle(country.getTitle())).thenReturn(Optional.of(country));
         when(officeRepo.save(any(Office.class))).thenReturn(office);
         OfficeResponse result = officeService.updateOffice(office.getId(), request);
 
         assertNotEquals(request.getCountryName(), result.getCountryName());
         assertEquals(result.getCity(), request.getCity());
+    }
+
+    @Test
+    void updateOffice_not_empty_countryName() {
+        OfficeRequest request = new OfficeRequest();
+        request.setCity("SPb");
+        request.setCountryName("RF");
+
+        Office office = new Office();
+        office.setCity("Moscow");
+        office.setStatus(OfficeStatus.CREATED);
+        office.setId(5L);
+        when(officeRepo.findById(office.getId())).thenReturn(Optional.of(office));
+
+        Country country = new Country();
+        country.setId(1L);
+        country.setTitle(request.getCountryName());
+        when(countryRepo.findByTitle(country.getTitle())).thenReturn(Optional.of(country));
+
+
+        when(officeRepo.save(any(Office.class))).thenReturn(office);
+        OfficeResponse result = officeService.updateOffice(office.getId(), request);
+
+        assertEquals(request.getCountryName(), result.getCountryName());
+
     }
 
     @Test
