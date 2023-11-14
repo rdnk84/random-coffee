@@ -11,7 +11,9 @@ import com.example.randomcoffee.model.enums.OfficeStatus;
 import com.example.randomcoffee.rest_api.dto.request.OfficeRequest;
 import com.example.randomcoffee.rest_api.dto.response.OfficeResponse;
 import com.example.randomcoffee.rest_api.dto.response.UserResponse;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -24,6 +26,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Bean;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -39,8 +42,8 @@ class OfficeServiceImplTest {
     @InjectMocks
     private OfficeServiceImpl officeService;
 
-    @Spy
-    private ObjectMapper mapper;
+//    @Spy
+//    private ObjectMapper mapper;
 
     @Mock
     private OfficeRepo officeRepo;
@@ -49,8 +52,17 @@ class OfficeServiceImplTest {
     @Mock
     private CountryRepo countryRepo;
 
+
+    @Bean
+    ObjectMapper objectMapper(){
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        objectMapper.registerModule(new JavaTimeModule());
+        return objectMapper;
+    }
+
     @Test
-    void getOfficeById() {
+    void getOfficeDto() {
         Office office = new Office();
         office.setId(1L);
         when(officeRepo.findById(office.getId())).thenReturn(Optional.of(office));
@@ -123,7 +135,7 @@ class OfficeServiceImplTest {
     }
 
     @Test
-    void delete_status_deleted() {
+    void delete_already_deleted() {
         Office office = new Office();
         office.setId(1L);
         office.setStatus(OfficeStatus.DELETED);

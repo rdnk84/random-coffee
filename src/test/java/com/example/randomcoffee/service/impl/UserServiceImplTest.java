@@ -1,5 +1,6 @@
 package com.example.randomcoffee.service.impl;
 
+import com.example.randomcoffee.exceptions.CustomException;
 import com.example.randomcoffee.model.db.entity.CoffeeUser;
 import com.example.randomcoffee.model.db.entity.MeetingEvent;
 import com.example.randomcoffee.model.db.entity.Office;
@@ -11,7 +12,10 @@ import com.example.randomcoffee.model.enums.Department;
 import com.example.randomcoffee.model.enums.UserActivityStatus;
 import com.example.randomcoffee.rest_api.dto.request.UserRequest;
 import com.example.randomcoffee.rest_api.dto.response.UserResponse;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -20,6 +24,8 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -106,6 +112,16 @@ class UserServiceImplTest {
         assertEquals(result.getEmail(), user.getEmail());
     }
 
+
+//    @Bean
+//    public ObjectMapper objectMapper() {
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+//        objectMapper.registerModule(new JavaTimeModule());
+//        return objectMapper;
+//    }
+
+
     @Test
     void createUser() {
 
@@ -125,6 +141,22 @@ class UserServiceImplTest {
         UserResponse result = userService.createUser(request);
 
         assertEquals(result.getId(), user.getId());
+    }
+
+    @Test
+    void email_already_exists() {
+        UserRequest request = new UserRequest();
+        request.setEmail("petrov@mail.ru");
+        CoffeeUser user = new CoffeeUser();
+        user.setId(1L);
+        user.setEmail("petrov@mail.ru");
+        when(userRepo.findById(user.getId())).thenReturn(Optional.of(user));
+
+        when(userRepo.save(any(CoffeeUser.class))).thenThrow(CustomException.class);
+        CustomException thrown = Assertions.assertThrows(CustomException.class, () -> {
+            userService.createUser(request);
+        }, "CoffeeUser with this email already exist");
+
     }
 
     @Test
@@ -179,10 +211,11 @@ class UserServiceImplTest {
         Office officeOld = new Office();
         officeOld.setId(1L);
         when(officeRepo.findById(1L)).thenReturn(Optional.of(officeOld));
+        user.setOffice(officeOld);
 
         Office officeNew = new Office();
         officeNew.setId(2L);
-        when(officeRepo.findById(1L)).thenReturn(Optional.of(officeNew));
+        when(officeRepo.findById(2L)).thenReturn(Optional.of(officeNew));
 
         when(officeRepo.save(any(Office.class))).thenReturn(officeOld);
         when(officeRepo.save(any(Office.class))).thenReturn(officeNew);
@@ -192,7 +225,8 @@ class UserServiceImplTest {
         assertEquals(result.getOffice().getId(), officeNew.getId());
     }
 
-    @Test
-    void findByHiringPeriod() {
-    }
+//    @Test
+//    void findByHiringPeriod() {
+//
+//    }
 }
