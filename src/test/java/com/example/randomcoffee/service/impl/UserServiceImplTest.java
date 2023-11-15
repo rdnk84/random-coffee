@@ -73,6 +73,16 @@ class UserServiceImplTest {
     }
 
     @Test
+    void user_not_found() {
+        CoffeeUser user = new CoffeeUser();
+        user.setId(1L);
+        when(userRepo.findById(5L)).thenThrow(CustomException.class);
+        CustomException thrown = Assertions.assertThrows(CustomException.class, () -> {
+            userService.coffeeUserById(5L);
+        }, "CoffeeUser with this id not found");
+    }
+
+    @Test
     void usersByLastName() {
         String lastName = "Petrov";
         CoffeeUser user = new CoffeeUser();
@@ -156,7 +166,17 @@ class UserServiceImplTest {
         CustomException thrown = Assertions.assertThrows(CustomException.class, () -> {
             userService.createUser(request);
         }, "CoffeeUser with this email already exist");
+    }
 
+    @Test
+    void invalid_email() {
+        UserRequest request = new UserRequest();
+        request.setEmail("petrov@mail.uk.com");
+
+        when(userRepo.save(any(CoffeeUser.class))).thenThrow(CustomException.class);
+        CustomException thrown = Assertions.assertThrows(CustomException.class, () -> {
+            userService.createUser(request);
+        }, "invalid email");
     }
 
     @Test

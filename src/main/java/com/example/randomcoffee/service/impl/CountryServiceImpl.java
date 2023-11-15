@@ -33,15 +33,17 @@ public class CountryServiceImpl implements CountryService {
 
     @Override
     public CountryResponse getCountryById(Long id) {
-        String errorMsg = String.format("User with id %d not found", id);
+        String errorMsg = String.format("Country with id %d not found", id);
         Country country = countryRepo.findById(id).orElseThrow(() -> new CustomException(errorMsg, HttpStatus.NOT_FOUND));
         CountryResponse result = mapper.convertValue(country, CountryResponse.class);
         return result;
     }
 
+
+
     @Override
     public CountryResponse changeCountry(Long id, CountryRequest request) {
-        String errorMsg = String.format("User with id %d not found", id);
+        String errorMsg = String.format("Country with id %d not found", id);
         Country country = countryRepo.findById(id).orElseThrow(() -> new CustomException(errorMsg, HttpStatus.NOT_FOUND));
         country.setTitle(StringUtils.isBlank(request.getTitle()) ? country.getTitle() : request.getTitle());
         country.setRegion(request.getRegion() == null ? country.getRegion() : request.getRegion());
