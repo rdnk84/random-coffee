@@ -67,6 +67,7 @@ class UserServiceImplTest {
     void getUserDto() {
         CoffeeUser user = new CoffeeUser();
         user.setId(1L);
+
         when(userRepo.findById(user.getId())).thenReturn(Optional.of(user));
         UserResponse result = userService.getUserDto(user.getId());
         assertEquals(Optional.of(result.getId()), Optional.of(user.getId()));
