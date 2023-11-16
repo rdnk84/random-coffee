@@ -4,6 +4,7 @@ import com.example.randomcoffee.rest_api.dto.request.HobbyRequest;
 import com.example.randomcoffee.rest_api.dto.request.ProjectRequest;
 import com.example.randomcoffee.rest_api.dto.response.HobbyResponse;
 import com.example.randomcoffee.rest_api.dto.response.ProjectResponse;
+import com.example.randomcoffee.rest_api.dto.response.UserResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 
@@ -16,4 +17,5 @@ public interface ProjectService {
     ProjectResponse updateProject(Long id, ProjectRequest request);
     void deleteProject(Long id);
     Page<ProjectResponse> getProjectByTitle(Integer page, Integer perPage, String sort, Sort.Direction order, String title);
+
 }

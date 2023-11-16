@@ -42,8 +42,8 @@ class OfficeServiceImplTest {
     @InjectMocks
     private OfficeServiceImpl officeService;
 
-//    @Spy
-//    private ObjectMapper mapper;
+   @Spy
+    private ObjectMapper mapper;
 
     @Mock
     private OfficeRepo officeRepo;
@@ -53,13 +53,13 @@ class OfficeServiceImplTest {
     private CountryRepo countryRepo;
 
 
-    @Bean
-    ObjectMapper objectMapper(){
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        objectMapper.registerModule(new JavaTimeModule());
-        return objectMapper;
-    }
+//    @Bean
+//    ObjectMapper objectMapper(){
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+//        objectMapper.registerModule(new JavaTimeModule());
+//        return objectMapper;
+//    }
 
     @Test
     void getOfficeDto() {

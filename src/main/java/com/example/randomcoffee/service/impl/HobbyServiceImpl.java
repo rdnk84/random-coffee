@@ -32,7 +32,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class HobbyServiceImpl implements HobbyService {
 
-
     private final HobbyRepo hobbyRepo;
     private final ObjectMapper objectMapper;
 

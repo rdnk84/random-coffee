@@ -26,4 +26,9 @@ public interface UserService {
     UserResponse userChangeOffice(Long userId, Long newOfficeId);
 
     Page<UserResponse> findByHiringPeriod(Integer page, Integer perPage, String sort, Sort.Direction order, String fromDate, String toDate);
+
+    UserResponse addProject(Long userId, Long projectId);
+
+       Page<UserResponse> getUsersByProject(Integer page, Integer perPage, String sort, Sort.Direction order, String projectCode);
+//    List<UserResponse> getUsersByProject(String projectCode);
 }

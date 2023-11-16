@@ -2,6 +2,7 @@ package com.example.randomcoffee.model.db.entity;
 
 import com.example.randomcoffee.model.enums.EntityStatus;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
@@ -14,6 +15,7 @@ import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -47,12 +49,8 @@ public class Project {
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     LocalDateTime updatedAt;
 
-    @ManyToMany()
-    @JoinTable(
-            name = "users_projects"
-            , joinColumns = @JoinColumn(name = "project_id")
-            , inverseJoinColumns = @JoinColumn(name = "user_id")
-    )
-    List<CoffeeUser> colleagues;
+    @ManyToMany(mappedBy = "projects")
+    @JsonIgnore
+    List<CoffeeUser> colleagues = new ArrayList<>();
 
 }

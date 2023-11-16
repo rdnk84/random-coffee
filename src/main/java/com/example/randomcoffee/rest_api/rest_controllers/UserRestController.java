@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Set;
 
 @Tag(name = "Пользователи")
@@ -90,4 +91,25 @@ public class UserRestController {
         return userService.findByHiringPeriod(page, perPage, sort, order, fromDate, toDate);
     }
 
+    @Operation(summary = "Добавить пользователю проект")
+    @PutMapping("/add-project/{userId}/{projectId}")
+    public UserResponse addProjectTo(@PathVariable Long userId, @PathVariable Long projectId) {
+        return userService.addProject(userId, projectId);
+    }
+
+    @Operation(summary = "Получить всех пользователей по проектному коду")
+    @GetMapping("/all-by-project-code")
+    public Page<UserResponse> getAllUsersByProjectCode(@RequestParam(defaultValue = "1") Integer page,
+                                                       @RequestParam(defaultValue = "10") Integer perPage,
+                                                       @RequestParam(defaultValue = "email") String sort,
+                                                       @RequestParam(defaultValue = "ASC") Sort.Direction order,
+                                                       @RequestParam("code") String code) {
+        return userService.getUsersByProject(page, perPage, sort, order, code);
+    }
+
+//    @Operation(summary = "Получить всех пользователей по проектному коду")
+//    @GetMapping("/all-by-project-code")
+//    public List<UserResponse> getAllUsersByProjectCode(@RequestParam("code") String code) {
+//        return userService.getUsersByProject( code);
+//    }
 }

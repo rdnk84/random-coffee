@@ -103,7 +103,7 @@ public class CoffeeUser {
             , joinColumns = @JoinColumn(name = "user_id")
             , inverseJoinColumns = @JoinColumn(name = "project_id")
     )
-    List<Project> projects;
+    List<Project> projects = new ArrayList<>();
 
 //    @OneToMany
 //    @JsonManagedReference(value = "events_user")
@@ -114,7 +114,7 @@ public class CoffeeUser {
 //             inverseJoinColumns = {@JoinColumn(name = "event_id", referencedColumnName = "id")})
 //    List<MeetingEvent> events;
 
-    @ManyToMany( cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "users_events", joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "event_id"))
     Set<MeetingEvent> events = new HashSet<>();

@@ -111,6 +111,7 @@ class CountryServiceImplTest {
         when(countryRepo.save(ArgumentMatchers.any(Country.class))).thenReturn(country);
         CountryResponse result = countryService.createCountry(request);
         assertEquals(Optional.of(result.getId()), Optional.of(country.getId()));
+        assertEquals(result.getTitle(), country.getTitle());
     }
 
     @Test

@@ -4,8 +4,10 @@ import com.example.randomcoffee.exceptions.CustomException;
 import com.example.randomcoffee.model.db.entity.CoffeeUser;
 import com.example.randomcoffee.model.db.entity.MeetingEvent;
 import com.example.randomcoffee.model.db.entity.Office;
+import com.example.randomcoffee.model.db.entity.Project;
 import com.example.randomcoffee.model.db.repository.EventRepo;
 import com.example.randomcoffee.model.db.repository.OfficeRepo;
+import com.example.randomcoffee.model.db.repository.ProjectRepo;
 import com.example.randomcoffee.model.db.repository.UserRepo;
 import com.example.randomcoffee.model.enums.AstroSign;
 import com.example.randomcoffee.model.enums.Department;
@@ -54,6 +56,10 @@ class UserServiceImplTest {
     @Spy
     ObjectMapper mapper;
 
+    public ObjectMapper getMapper() {
+        return mapper;
+    }
+
     @Mock
     UserRepo userRepo;
 
@@ -62,6 +68,9 @@ class UserServiceImplTest {
 
     @Mock
     OfficeRepo officeRepo;
+
+    @Mock
+    ProjectRepo projectRepo;
 
     @Test
     void getUserDto() {
@@ -135,7 +144,6 @@ class UserServiceImplTest {
 
     @Test
     void createUser() {
-
         UserRequest request = new UserRequest();
         request.setEmail("petrov@mail.ru");
         request.setPassword("jjjjj");
@@ -147,7 +155,7 @@ class UserServiceImplTest {
 
         CoffeeUser user = new CoffeeUser();
         user.setId(1L);
-        when(userRepo.findById(user.getId())).thenReturn(Optional.of(user));
+//        when(userRepo.findById(user.getId())).thenReturn(Optional.of(user));
         when(userRepo.save(any(CoffeeUser.class))).thenReturn(user);
         UserResponse result = userService.createUser(request);
 
@@ -200,7 +208,6 @@ class UserServiceImplTest {
 
         List<CoffeeUser> users = (List.of(user));
         Pageable pageRequest = getPageRequest(1, 2, "email", Sort.Direction.ASC);
-
         Page<CoffeeUser> usersPage = new PageImpl<CoffeeUser>(users, pageRequest, 1);
         when(userRepo.findAll(any(Pageable.class))).thenReturn(usersPage);
 
@@ -244,6 +251,50 @@ class UserServiceImplTest {
 
         UserResponse result = userService.userChangeOffice(1L, officeNew.getId());
         assertEquals(result.getOffice().getId(), officeNew.getId());
+    }
+
+    @Test
+    void addProject() {
+        CoffeeUser user = new CoffeeUser();
+        user.setId(1L);
+        when(userRepo.findById(user.getId())).thenReturn(Optional.of(user));
+
+        Project project = new Project();
+        project.setId(5L);
+        when(projectRepo.findById(project.getId())).thenReturn(Optional.of(project));
+
+        when(userRepo.save(any(CoffeeUser.class))).thenReturn(user);
+        when(projectRepo.save(any(Project.class))).thenReturn(project);
+
+        UserResponse result = userService.addProject(1L, 5L);
+        assertEquals(result.getUsersProjects().size(), 1);
+        assertEquals(project.getColleagues().size(), 1);
+    }
+
+    @Test
+    void getUsersByProject() {
+
+        CoffeeUser user = new CoffeeUser();
+        user.setId(1L);
+        when(userRepo.findById(user.getId())).thenReturn(Optional.of(user));
+
+        Project project = new Project();
+        project.setId(5L);
+        project.setProjectCode("FNCH");
+        when(projectRepo.findByProjectCode(project.getProjectCode())).thenReturn(Optional.of(project));
+
+        List<CoffeeUser> userList = (List.of(user));
+        Pageable pageRequest = getPageRequest(1, 2, "email", Sort.Direction.ASC);
+        Page<CoffeeUser> userPage = new PageImpl<CoffeeUser>(userList, pageRequest, 1);
+        when(userRepo.findUsersByProjectCode(any(Pageable.class), anyString())).thenReturn(userPage);
+        Page<UserResponse> result = userService.getUsersByProject(1, 2, "email", Sort.Direction.ASC, project.getProjectCode());
+        assertEquals(result.getNumberOfElements(), 1);
+        //        user.setProjects(projects);
+//
+//        List<CoffeeUser> colleaguegsList = (List.of(user));
+//        project.setColleagues(colleaguegsList);
+//        List<UserResponse> userResponseList = userService.getUsersByProject(project.getProjectCode());
+//        assertEquals(userResponseList.size(), 1);
     }
 
 //    @Test

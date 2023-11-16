@@ -4,14 +4,17 @@ import com.example.randomcoffee.exceptions.CustomException;
 import com.example.randomcoffee.model.db.entity.CoffeeUser;
 import com.example.randomcoffee.model.db.entity.MeetingEvent;
 import com.example.randomcoffee.model.db.entity.Office;
+import com.example.randomcoffee.model.db.entity.Project;
 import com.example.randomcoffee.model.db.repository.EventRepo;
 import com.example.randomcoffee.model.db.repository.OfficeRepo;
+import com.example.randomcoffee.model.db.repository.ProjectRepo;
 import com.example.randomcoffee.model.db.repository.UserRepo;
 import com.example.randomcoffee.model.enums.OfficeStatus;
 import com.example.randomcoffee.model.enums.UserActivityStatus;
 import com.example.randomcoffee.rest_api.dto.request.OfficeRequest;
 import com.example.randomcoffee.rest_api.dto.request.UserRequest;
 import com.example.randomcoffee.rest_api.dto.response.OfficeResponse;
+import com.example.randomcoffee.rest_api.dto.response.ProjectResponse;
 import com.example.randomcoffee.rest_api.dto.response.UserResponse;
 import com.example.randomcoffee.service.UserService;
 import com.example.randomcoffee.utils.PaginationUtil;
@@ -41,6 +44,7 @@ public class UserServiceImpl implements UserService {
     private final EventRepo eventRepo;
     private final ObjectMapper mapper;
     private final OfficeRepo officeRepo;
+    private final ProjectRepo projectRepo;
 
 
     @Override
@@ -190,5 +194,55 @@ public class UserServiceImpl implements UserService {
                 .collect(Collectors.toList());
         return new PageImpl<>(usersList);
     }
+
+    @Override
+    public UserResponse addProject(Long userId, Long projectId) {
+        String userNotFound = String.format("User with id %d not found", userId);
+        CoffeeUser user = userRepo.findById(userId).orElseThrow(() -> new CustomException(userNotFound, HttpStatus.NOT_FOUND));
+
+        String errorMsg = String.format("Project with id %d not found", projectId);
+        Project project = projectRepo.findById(projectId).orElseThrow(() -> new CustomException(errorMsg, HttpStatus.NOT_FOUND));
+
+        List<Project> projects = user.getProjects();
+        projects.add(project);
+        user.setProjects(projects);
+
+        List<CoffeeUser> colleagues = project.getColleagues();
+        colleagues.add(user);
+        project.setColleagues(colleagues);
+
+        projectRepo.save(project);
+        CoffeeUser save = userRepo.save(user);
+
+        UserResponse result = mapper.convertValue(save, UserResponse.class);
+        List<ProjectResponse> projectResponseList = projects.stream()
+                        .map(u -> mapper.convertValue(u, ProjectResponse.class))
+                                .collect(Collectors.toList());
+        result.setUsersProjects(projectResponseList);
+
+        return result;
+    }
+
+    @Override
+    public Page<UserResponse> getUsersByProject(Integer page, Integer perPage, String sort, Sort.Direction order, String projectCode) {
+
+        Pageable pageRequest = PaginationUtil.getPageRequest(page, perPage, sort, order);
+        Page<CoffeeUser> usersPage = userRepo.findUsersByProjectCode(pageRequest, projectCode);
+        List<UserResponse> usersList = usersPage.getContent().stream()
+                .map(u -> mapper.convertValue(u, UserResponse.class))
+                .collect(Collectors.toList());
+        return new PageImpl<>(usersList);
+    }
+
+//    @Override
+//    public List<UserResponse> getUsersByProject(String projectCode) {
+//
+//        Project project = projectRepo.findByProjectCode(projectCode).orElseThrow(() -> new CustomException("project not found", HttpStatus.NOT_FOUND));
+//        List<CoffeeUser> usersList = project.getColleagues();
+//        List<UserResponse> result = usersList.stream()
+//                .map(u -> mapper.convertValue(u, UserResponse.class))
+//                .collect(Collectors.toList());
+//        return result;
+//    }
 
 }

@@ -39,4 +39,14 @@ public interface UserRepo extends JpaRepository<CoffeeUser, Long> {
     @Query(nativeQuery = true, value =  "SELECT * FROM users u WHERE u.hiring_date >= :fromDate AND u.hiring_date <= :toDate")
     Page<CoffeeUser> findByHiringDate(Pageable request, @Param("fromDate") Date fromDate, @Param("toDate") Date toDate);
 
+    @Query(nativeQuery = true, value = "SELECT u.* " +
+            " FROM " +
+            " users u," +
+            " user_project up," +
+            " projects p" +
+            " WHERE" +
+            " u.id = up.user_id" +
+            " AND p.id = up.project_id" +
+            " AND p.project_code = :code")
+    Page<CoffeeUser> findUsersByProjectCode(Pageable request, @Param("code") String code);
 }

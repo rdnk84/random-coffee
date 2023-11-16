@@ -1,5 +1,6 @@
 package com.example.randomcoffee.service.impl;
 
+import com.example.randomcoffee.exceptions.CustomException;
 import com.example.randomcoffee.model.db.entity.CoffeeUser;
 import com.example.randomcoffee.model.db.entity.MeetingEvent;
 import com.example.randomcoffee.model.db.repository.EventRepo;
@@ -12,6 +13,7 @@ import com.example.randomcoffee.model.enums.UserActivityStatus;
 import com.example.randomcoffee.rest_api.dto.request.EventRequest;
 import com.example.randomcoffee.rest_api.dto.response.EventResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -21,6 +23,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -41,6 +44,8 @@ class EventServiceImplTest {
 
     @Spy
     ObjectMapper mapper;
+
+
 
     @Mock
     UserRepo userRepo;
@@ -79,6 +84,24 @@ class EventServiceImplTest {
         assertEquals(result.getLocation(), event.getLocation());
     }
 
+    @Test
+    void event_cancelled() {
+
+        EventRequest request = new EventRequest();
+        request.setTitle("another event");
+
+        MeetingEvent event = new MeetingEvent();
+        event.setId(1L);
+        event.setStatus(EventStatus.CANCELLED);
+
+        when(eventRepo.findById(event.getId())).thenReturn(Optional.of(event));
+        when(eventRepo.save(any(MeetingEvent.class))).thenThrow(CustomException.class);
+        CustomException thrown = Assertions.assertThrows(CustomException.class, () -> {
+            eventService.updateEvent(event.getId(), request);
+            }, "This meeting was already cancelled");
+
+    }
+
 //    @Test
 //    void createEvent() {
 //
@@ -86,7 +109,7 @@ class EventServiceImplTest {
 //        request.setEventTheme(EventTheme.COFFEE);
 //        request.setLocation(EventLocation.INSIDE);
 //        request.setTitle("some event");
-////        request.setMeetingDate();
+//        request.setMeetingDate(LocalDate.of(2019, 04, 16));
 //
 //        MeetingEvent event = new MeetingEvent();
 //        event.setId(1L);
