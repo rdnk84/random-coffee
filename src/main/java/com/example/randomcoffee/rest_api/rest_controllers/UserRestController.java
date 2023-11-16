@@ -112,4 +112,21 @@ public class UserRestController {
 //    public List<UserResponse> getAllUsersByProjectCode(@RequestParam("code") String code) {
 //        return userService.getUsersByProject( code);
 //    }
+
+    @Operation(summary = "Добавить пользователю хобби")
+    @PutMapping("/add-hobby/{userId}/{hobbyId}")
+    public UserResponse addHobbyTo(@PathVariable Long userId, @PathVariable Long hobbyId) {
+        return userService.addHobby(userId, hobbyId);
+    }
+
+    @Operation(summary = "Получить всех пользователей по хобби")
+    @GetMapping("/all-by-hobby")
+    public Page<UserResponse> allUsersByHobby(@RequestParam(defaultValue = "1") Integer page,
+                                              @RequestParam(defaultValue = "10") Integer perPage,
+                                              @RequestParam(defaultValue = "email") String sort,
+                                              @RequestParam(defaultValue = "ASC") Sort.Direction order,
+                                              @RequestParam("hobby") String hobby) {
+        return userService.getUsersByHobby(page, perPage, sort, order, hobby);
+    }
+
 }

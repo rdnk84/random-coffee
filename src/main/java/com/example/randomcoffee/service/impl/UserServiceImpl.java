@@ -1,18 +1,13 @@
 package com.example.randomcoffee.service.impl;
 
 import com.example.randomcoffee.exceptions.CustomException;
-import com.example.randomcoffee.model.db.entity.CoffeeUser;
-import com.example.randomcoffee.model.db.entity.MeetingEvent;
-import com.example.randomcoffee.model.db.entity.Office;
-import com.example.randomcoffee.model.db.entity.Project;
-import com.example.randomcoffee.model.db.repository.EventRepo;
-import com.example.randomcoffee.model.db.repository.OfficeRepo;
-import com.example.randomcoffee.model.db.repository.ProjectRepo;
-import com.example.randomcoffee.model.db.repository.UserRepo;
+import com.example.randomcoffee.model.db.entity.*;
+import com.example.randomcoffee.model.db.repository.*;
 import com.example.randomcoffee.model.enums.OfficeStatus;
 import com.example.randomcoffee.model.enums.UserActivityStatus;
 import com.example.randomcoffee.rest_api.dto.request.OfficeRequest;
 import com.example.randomcoffee.rest_api.dto.request.UserRequest;
+import com.example.randomcoffee.rest_api.dto.response.HobbyResponse;
 import com.example.randomcoffee.rest_api.dto.response.OfficeResponse;
 import com.example.randomcoffee.rest_api.dto.response.ProjectResponse;
 import com.example.randomcoffee.rest_api.dto.response.UserResponse;
@@ -42,9 +37,10 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepo userRepo;
     private final EventRepo eventRepo;
-    private final ObjectMapper mapper;
+    private final HobbyRepo hobbyRepo;
     private final OfficeRepo officeRepo;
     private final ProjectRepo projectRepo;
+    private final ObjectMapper mapper;
 
 
     @Override
@@ -216,8 +212,8 @@ public class UserServiceImpl implements UserService {
 
         UserResponse result = mapper.convertValue(save, UserResponse.class);
         List<ProjectResponse> projectResponseList = projects.stream()
-                        .map(u -> mapper.convertValue(u, ProjectResponse.class))
-                                .collect(Collectors.toList());
+                .map(u -> mapper.convertValue(u, ProjectResponse.class))
+                .collect(Collectors.toList());
         result.setUsersProjects(projectResponseList);
 
         return result;
@@ -232,6 +228,47 @@ public class UserServiceImpl implements UserService {
                 .map(u -> mapper.convertValue(u, UserResponse.class))
                 .collect(Collectors.toList());
         return new PageImpl<>(usersList);
+    }
+
+    @Override
+    public Page<UserResponse> getUsersByHobby(Integer page, Integer perPage, String sort, Sort.Direction order, String hobby) {
+
+        Pageable pageRequest = PaginationUtil.getPageRequest(page, perPage, sort, order);
+        Page<CoffeeUser> usersPage = userRepo.findUsersByHobby(pageRequest, hobby);
+        List<UserResponse> usersList = usersPage.getContent().stream()
+                .map(u -> mapper.convertValue(u, UserResponse.class))
+                .collect(Collectors.toList());
+        return new PageImpl<>(usersList);
+    }
+
+    @Override
+    public UserResponse addHobby(Long userId, Long hobbyId) {
+
+        String userNotFound = String.format("User with id %d not found", userId);
+        CoffeeUser user = userRepo.findById(userId).orElseThrow(() -> new CustomException(userNotFound, HttpStatus.NOT_FOUND));
+
+        String hobbyNotFound = String.format("Project with id %d not found", hobbyId);
+        Hobby hobby = hobbyRepo.findById(hobbyId).orElseThrow(() -> new CustomException(hobbyNotFound, HttpStatus.NOT_FOUND));
+
+        List<Hobby> hobbyList = user.getHobbies();
+        hobbyList.add(hobby);
+        user.setHobbies(hobbyList);
+
+        Set<CoffeeUser> colleagues = hobby.getColleagues();
+        colleagues.add(user);
+        hobby.setColleagues(colleagues);
+
+        hobbyRepo.save(hobby);
+        CoffeeUser save = userRepo.save(user);
+
+        UserResponse result = mapper.convertValue(save, UserResponse.class);
+        List<HobbyResponse> hobbyResponseList = hobbyList.stream()
+                .map(u -> mapper.convertValue(u, HobbyResponse.class))
+                .collect(Collectors.toList());
+        result.setUserHobbies(hobbyResponseList);
+
+        return result;
+
     }
 
 //    @Override

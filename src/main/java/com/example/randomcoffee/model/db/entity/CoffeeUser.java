@@ -91,7 +91,7 @@ public class CoffeeUser {
             , joinColumns = @JoinColumn(name = "user_id")
             , inverseJoinColumns = @JoinColumn(name = "hobby_id")
     )
-    List<Hobby> hobbies;
+    List<Hobby> hobbies = new ArrayList<>();
 
     @ManyToOne
     @JsonBackReference(value = "office_users")
