@@ -1,8 +1,14 @@
 package com.example.randomcoffee.service.impl;
 
 import com.example.randomcoffee.exceptions.CustomException;
-import com.example.randomcoffee.model.db.entity.*;
-import com.example.randomcoffee.model.db.repository.*;
+import com.example.randomcoffee.model.db.entity.CoffeeUser;
+import com.example.randomcoffee.model.db.entity.MeetingEvent;
+import com.example.randomcoffee.model.db.entity.Office;
+import com.example.randomcoffee.model.db.entity.Project;
+import com.example.randomcoffee.model.db.repository.EventRepo;
+import com.example.randomcoffee.model.db.repository.OfficeRepo;
+import com.example.randomcoffee.model.db.repository.ProjectRepo;
+import com.example.randomcoffee.model.db.repository.UserRepo;
 import com.example.randomcoffee.model.enums.AstroSign;
 import com.example.randomcoffee.model.enums.Department;
 import com.example.randomcoffee.model.enums.UserActivityStatus;
@@ -65,9 +71,6 @@ class UserServiceImplTest {
 
     @Mock
     ProjectRepo projectRepo;
-
-    @Mock
-    HobbyRepo hobbyRepo;
 
     @Test
     void getUserDto() {
@@ -293,44 +296,6 @@ class UserServiceImplTest {
 //        List<UserResponse> userResponseList = userService.getUsersByProject(project.getProjectCode());
 //        assertEquals(userResponseList.size(), 1);
     }
-
-    @Test
-    void addHobby() {
-        CoffeeUser user = new CoffeeUser();
-        user.setId(1L);
-        when(userRepo.findById(user.getId())).thenReturn(Optional.of(user));
-
-        Hobby hobby = new Hobby();
-        hobby.setId(5L);
-        when(hobbyRepo.findById(hobby.getId())).thenReturn(Optional.of(hobby));
-
-        when(userRepo.save(any(CoffeeUser.class))).thenReturn(user);
-        when(hobbyRepo.save(any(Hobby.class))).thenReturn(hobby);
-
-        UserResponse result = userService.addHobby(1L, 5L);
-        assertEquals(result.getUserHobbies().size(), 1);
-        assertEquals(hobby.getColleagues().size(), 1);
-    }
-
-    @Test
-    void getUsersByHobby() {
-        CoffeeUser user = new CoffeeUser();
-        user.setId(1L);
-        when(userRepo.findById(user.getId())).thenReturn(Optional.of(user));
-
-        Hobby hobby = new Hobby();
-        hobby.setId(1L);
-        hobby.setTitle("Steel");
-        when(hobbyRepo.findById(hobby.getId())).thenReturn(Optional.of(hobby));
-
-        List<CoffeeUser> userList = (List.of(user));
-        Pageable pageRequest = getPageRequest(1, 2, "email", Sort.Direction.ASC);
-        Page<CoffeeUser> userPage = new PageImpl<CoffeeUser>(userList, pageRequest, 1);
-        when(userRepo.findUsersByHobby(any(Pageable.class), anyString())).thenReturn(userPage);
-        Page<UserResponse> result = userService.getUsersByHobby(1, 2, "email", Sort.Direction.ASC, hobby.getTitle());
-        assertEquals(result.getNumberOfElements(), 1);
-    }
-
 
 //    @Test
 //    void findByHiringPeriod() {

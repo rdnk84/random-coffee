@@ -66,7 +66,7 @@ public class HobbyRestController {
                                              @RequestParam(defaultValue = "title") String sort,
                                              @RequestParam(defaultValue = "ASC") Sort.Direction order,
                                              @RequestParam(required = false) String title) {
-        return hobbyService.getHobbiesByTitle(page, perPage, sort, order, title);
+        return hobbyService.getHobbyByTitle(page, perPage, sort, order, title);
     }
 
 }

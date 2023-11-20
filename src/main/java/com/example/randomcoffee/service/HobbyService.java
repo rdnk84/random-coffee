@@ -13,5 +13,5 @@ public interface HobbyService {
     HobbyResponse createHobby(HobbyRequest request);
     HobbyResponse updateHobby(Long id, HobbyRequest request);
     void deleteHobby(Long id);
-    Page<HobbyResponse> getHobbiesByTitle(Integer page, Integer perPage, String sort, Sort.Direction order, String title);
+    Page<HobbyResponse> getHobbyByTitle(Integer page, Integer perPage, String sort, Sort.Direction order, String title);
 }

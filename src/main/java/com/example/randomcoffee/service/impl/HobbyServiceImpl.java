@@ -93,7 +93,7 @@ public class HobbyServiceImpl implements HobbyService {
     }
 
     @Override
-    public Page<HobbyResponse> getHobbiesByTitle(Integer page, Integer perPage, String sort, Sort.Direction order, String title) {
+    public Page<HobbyResponse> getHobbyByTitle(Integer page, Integer perPage, String sort, Sort.Direction order, String title) {
         Pageable pageRequest = PaginationUtil.getPageRequest(page, perPage, sort, order);
         Page<Hobby> hobbiesPage = hobbyRepo.findByTitle(pageRequest, title);
         List<HobbyResponse> hobbiesList = hobbiesPage.getContent().stream()
