@@ -27,13 +27,23 @@ spring:
           lob:
             non_contextual_creation: true
 
+
 logging:
   level:
     org:
-      hibernate:
-        type: trace
+      springframework:
+        security: DEBUG
+      web:
+        security: DEBUG
+#    org:
+#      hibernate:
+#        type: trace
+    com:
+      type: TRACE
+
+
 
 
 
 #app:
-#  base-url: itmo.ru
+#  base-url: itmo.ruo

@@ -31,4 +31,7 @@ public interface UserService {
 
        Page<UserResponse> getUsersByProject(Integer page, Integer perPage, String sort, Sort.Direction order, String projectCode);
 //    List<UserResponse> getUsersByProject(String projectCode);
+
+    UserResponse addHobby(Long userId, Long hobbyId);
+    Page<UserResponse> getUsersByHobby(Integer page, Integer perPage, String sort, Sort.Direction order, String hobbyTitle);
 }

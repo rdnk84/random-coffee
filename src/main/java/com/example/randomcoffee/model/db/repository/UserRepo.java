@@ -49,4 +49,15 @@ public interface UserRepo extends JpaRepository<CoffeeUser, Long> {
             " AND p.id = up.project_id" +
             " AND p.project_code = :code")
     Page<CoffeeUser> findUsersByProjectCode(Pageable request, @Param("code") String code);
+
+    @Query(nativeQuery = true, value = "SELECT u.* " +
+            " FROM " +
+            " users u," +
+            " user_hobby uh," +
+            " hobbies h" +
+            " WHERE" +
+            " u.id = uh.user_id" +
+            " AND h.id = uh.hobby_id" +
+            " AND h.title = %:hobby%")
+    Page<CoffeeUser> findUsersByHobby(Pageable request, @Param("hobby") String hobby);
 }

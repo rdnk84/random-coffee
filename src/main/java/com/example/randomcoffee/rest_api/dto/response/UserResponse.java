@@ -23,4 +23,5 @@ public class UserResponse extends UserRequest {
     Set<EventResponse> events;
 
     List<ProjectResponse> usersProjects;
+    List<HobbyResponse> hobbyResponseList;
 }
