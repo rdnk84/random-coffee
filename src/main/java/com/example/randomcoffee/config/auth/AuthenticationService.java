@@ -23,7 +23,32 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
-    public AuthenticationResponse register(RegisterRequest request) {
+//    public AuthenticationResponse register(RegisterRequest request) {
+//
+//        String email = request.getEmail().trim();
+//        userRepo.findByEmail(email)
+//                .ifPresent(u -> {
+//                    throw new CustomException("CoffeeUser with this email already exist", HttpStatus.BAD_REQUEST);
+//                });
+//        if (StringUtils.isBlank(request.getLastName()) || StringUtils.isBlank(request.getFirstName()) || StringUtils.isBlank(request.getPassword())) {
+//            throw new CustomException("Some of highlighted fields are blank", HttpStatus.BAD_REQUEST);
+//        }
+//        if (!EmailValidator.getInstance().isValid(email)) {
+//            throw new CustomException("invalid email", HttpStatus.BAD_REQUEST);
+//        }
+//        CoffeeUser user = CoffeeUser.builder()
+//                .firstName(request.getFirstName())
+//                .lastName(request.getLastName())
+//                .email(request.getEmail())
+//                .password(passwordEncoder.encode(request.getPassword()))
+//                .role(Role.USER)
+//                .build();
+//        userRepo.save(user);
+//        String jwtToken = jwtService.generateToken(user);
+//        return AuthenticationResponse.builder().token(jwtToken).build();
+//    }
+
+    public AuthenticationResponse register(CoffeeUser request) {
 
         String email = request.getEmail().trim();
         userRepo.findByEmail(email)

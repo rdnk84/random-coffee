@@ -2,6 +2,7 @@ package com.example.randomcoffee.config;
 
 ////import com.example.randomcoffee.config.auth.JwtAuthenticationFilter;
 //import jakarta.servlet.Filter;
+
 import com.example.randomcoffee.config.auth.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -25,7 +26,7 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-          final String[] SWAGGER_ENDPOINT = {
+        final String[] SWAGGER_ENDPOINT = {
                 "/**swagger**/**",
                 "/swagger-resources",
                 "/swagger-resources/**",
@@ -35,11 +36,10 @@ public class SecurityConfiguration {
         };
 
 
-
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/registration/**").permitAll()
                         .requestMatchers("/api/v1/auth/**").permitAll()
-                        .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers(SWAGGER_ENDPOINT).permitAll()
                         .anyRequest().authenticated()
                 )

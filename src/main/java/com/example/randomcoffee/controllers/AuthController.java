@@ -4,8 +4,10 @@ import com.example.randomcoffee.config.auth.AuthenticationRequest;
 import com.example.randomcoffee.config.auth.AuthenticationResponse;
 import com.example.randomcoffee.config.auth.AuthenticationService;
 import com.example.randomcoffee.config.auth.RegisterRequest;
+import com.example.randomcoffee.model.db.entity.CoffeeUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -29,9 +31,15 @@ public class AuthController {
 //    }
 
     @PostMapping("/register")
-    public String register(@RequestBody RegisterRequest request) {
-        return "reg-form";
+    public ResponseEntity<AuthenticationResponse> register(@RequestBody CoffeeUser request) {
+        return ResponseEntity.ok(service.register(request));
     }
+
+//    @GetMapping("/reg/form")
+//    public String register(Model model) {
+//        model.addAttribute("regForm", "Зарегистрироваться");
+//        return "reg-form";
+//    }
 
 
     @PostMapping("/authenticate")

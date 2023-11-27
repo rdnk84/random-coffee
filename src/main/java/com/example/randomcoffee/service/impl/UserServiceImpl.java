@@ -269,6 +269,4 @@ public class UserServiceImpl implements UserService {
         return new PageImpl<>(usersList);
     }
 
-
-
 }
