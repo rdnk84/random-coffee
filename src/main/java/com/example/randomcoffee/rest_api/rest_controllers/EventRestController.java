@@ -110,11 +110,6 @@ public class EventRestController {
         return service.ifEventAlreadyExist(day, startTime, location);
     }
 
-//    @Operation(summary = "Проверка есть ли уже такое мероприятие по дате, времени и локации")
-//    @GetMapping("/event-exists-already")
-//    public EventResponse ifEventExists(@RequestParam("day") String day,
-//                                       @RequestParam("time") String startTime) {
-//        return service.ifEventAlreadyExist(day, startTime);
-//    }
+
 
 }

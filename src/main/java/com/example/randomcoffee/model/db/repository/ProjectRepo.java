@@ -13,7 +13,6 @@ public interface ProjectRepo extends JpaRepository<Project, Long> {
     @Override
     Optional<Project> findById(Long id);
 
-//    @Query(nativeQuery = true, value =  "SELECT * FROM users u WHERE u.hiring_date >= :fromDate AND u.hiring_date <= :toDate")
     Optional<Project> findByProjectCode(String code);
 
     @Query("select p from Project p where p.status <> 'DELETED' and  p.title like %:title%")

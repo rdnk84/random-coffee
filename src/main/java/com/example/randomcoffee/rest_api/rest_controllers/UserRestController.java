@@ -123,9 +123,5 @@ public class UserRestController {
         return userService.getUsersByHobby(page, perPage, sort, order, hobby);
     }
 
-//    @Operation(summary = "Получить всех пользователей по проектному коду")
-//    @GetMapping("/all-by-project-code")
-//    public List<UserResponse> getAllUsersByProjectCode(@RequestParam("code") String code) {
-//        return userService.getUsersByProject( code);
-//    }
+
 }

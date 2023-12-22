@@ -70,11 +70,7 @@ class OfficeServiceImplTest {
         assertEquals(Optional.of(result.getId()), Optional.of(office.getId()));
     }
 
-    //    @Test
-//    public void wrongInput() {
-//        Throwable exception = assertThrows(InvalidArgumentException.class,
-//                ()->{objectName.yourMethod("WRONG");} );
-//    }
+
     @Test
     void country_not_found() {
         OfficeRequest request = new OfficeRequest();

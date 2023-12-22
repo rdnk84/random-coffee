@@ -19,12 +19,6 @@ public interface EventRepo extends JpaRepository<MeetingEvent, Long> {
 
     Optional<MeetingEvent> findById(Long id);
 
-//    @Query(nativeQuery = true, value = "SELECT * FROM events e WHERE ")
-//    Set<MeetingEvent> findAllByUserId(@Param("userId") List userId);
-
-    //    @Query(nativeQuery = true, value = "SELECT * FROM events e WHERE e.meeting_date > 'pubDateStart' AND e.meeting_date < NOW()")
-//    List<MeetingEvent> findByDate(@Param("currDate") LocalDateTime currDate, @Param("dateEnd") Date dateEnd);
-
     @Query(nativeQuery = true, value = "SELECT * FROM event e WHERE e.meeting_date  BETWEEN :dayStart AND :dayEnd")
     Page<MeetingEvent> findByDaysBetween(Pageable request, @Param("dayStart") Date dayStart, @Param("dayEnd") Date dayEnd);
 
@@ -44,8 +38,5 @@ public interface EventRepo extends JpaRepository<MeetingEvent, Long> {
 
     @Query(nativeQuery = true, value = "SELECT * FROM event e WHERE e.status <> 'CANCELLED'")
     List<MeetingEvent> findAllNotCancelled();
-
-//    Set<MeetingEvent> findAllByUserId(Long id);
-
 
 }

@@ -25,13 +25,8 @@ public class EventRequest {
     String title;
     EventTheme eventTheme;
 
-//    @DateTimeFormat(iso= DateTimeFormat.ISO.DATE_TIME, pattern = "yyyy-MM-dd HH:mm:ss")
-//    LocalDateTime meetingDateTime;
-
-    //    Date meetingDate;
-
     LocalDate meetingDate;
     Time meetingTime;
     EventLocation location;
-//    Set<Object> participants = new HashSet<>();
+
 }

@@ -32,5 +32,5 @@ public class UserRequest {
     AstroSign astroSign;
     LocalDate hiringDate;
     Department department;
-//    Set<Object> events = new HashSet<>();
+
 }

@@ -50,11 +50,7 @@ public class OfficeServiceImpl implements OfficeService {
         return result;
     }
 
-//    public Office getOffice(Long id) {
-//        String errorMsg = String.format("Office with id %d not found", id);
-//        Office office = officeRepo.findById(id).orElseThrow(() -> new CustomException(errorMsg, HttpStatus.NOT_FOUND));
-//        return office;
-//    }
+
 
     @Override
     public OfficeResponse createOffice(OfficeRequest request) {

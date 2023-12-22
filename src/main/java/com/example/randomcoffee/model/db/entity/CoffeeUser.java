@@ -107,14 +107,6 @@ public class CoffeeUser implements UserDetails {
     )
     List<Project> projects = new ArrayList<>();
 
-//    @OneToMany
-//    @JsonManagedReference(value = "events_user")
-//    List<MeetingEvent> events;
-
-//    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-//    @JoinTable(name = "events_users", joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
-//             inverseJoinColumns = {@JoinColumn(name = "event_id", referencedColumnName = "id")})
-//    List<MeetingEvent> events;
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "users_events", joinColumns = @JoinColumn(name = "user_id"),
@@ -155,7 +147,6 @@ public class CoffeeUser implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
-
 
 
 }

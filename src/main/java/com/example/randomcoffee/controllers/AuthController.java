@@ -17,29 +17,10 @@ public class AuthController {
 
     private final AuthenticationService service;
 
-//    @GetMapping("/ololo")
-//    public ResponseEntity<Object> register() {
-////        throw new RuntimeException();
-//        return ResponseEntity.ok("olololo 2");
-//    }
-
-
-
-//    @PostMapping("/register")
-//    public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequest request) {
-//        return ResponseEntity.ok(service.register(request));
-//    }
-
     @PostMapping("/register")
     public ResponseEntity<AuthenticationResponse> register(@RequestBody CoffeeUser request) {
         return ResponseEntity.ok(service.register(request));
     }
-
-//    @GetMapping("/reg/form")
-//    public String register(Model model) {
-//        model.addAttribute("regForm", "Зарегистрироваться");
-//        return "reg-form";
-//    }
 
 
     @PostMapping("/authenticate")
